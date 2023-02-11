@@ -1,17 +1,15 @@
-const express = require('express')
-const router = express.Router()
-const registerRoute = require('./register.router')
+
+const {loginRoute,registerRoute,forgotpasswordRoute} = require('./auth.routes')
+
 
 const apiRouter = (app) =>{
-    
-    router.use("/register",registerRoute)
 
-    router.use("*",(req,res) =>{
-        res.json({
-            message: "this route is NOT DEFINED"
-        })
-    })
-    return app.use('/',router)
+    app.use(loginRoute)
+
+    app.use(registerRoute)
+
+    app.use(forgotpasswordRoute)
 }
+
 
 module.exports = apiRouter

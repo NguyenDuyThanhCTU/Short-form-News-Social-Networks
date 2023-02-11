@@ -11,11 +11,19 @@ const UserSchema = new Schema({
         type: String,
         require: true
     },
+    email:{
+        type: String,
+        require: true,
+        unique: true
+    },
     createAt:{
         type: Date,
         default: Date.now()
+    },
+    admin:{
+        type: Boolean,
+        default: false
     }
-
 })
 
 module.exports = mongoose.model('user',UserSchema)
