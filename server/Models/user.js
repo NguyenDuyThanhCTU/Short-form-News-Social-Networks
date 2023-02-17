@@ -9,7 +9,7 @@ const UserSchema = new Schema({
     },
     password:{
         type: String,
-        require: true
+        require: true,
     },
     email:{
         type: String,
@@ -22,6 +22,10 @@ const UserSchema = new Schema({
     },
     admin:{
         type: Boolean,
+        default: false
+    },
+    contentCreator:{
+        type:Boolean,
         default: false
     }
 })

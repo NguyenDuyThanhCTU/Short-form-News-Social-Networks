@@ -1,25 +1,50 @@
 const user = require('../Models/user')
-const argon2 = require('argon2')
-
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const authController ={}
+
+generateAccessToken = (user) =>{
+  return jwt.sign({
+    id: user._id,
+    admin: user.admin,
+    contentCreator: user.contentCreator
+  },process.env.SecretKey,{
+    expiresIn: "30d"
+  })
+}
+
+refreshAccesToken = (user) =>{
+  return jwt.sign({
+    id: user._id,
+    admin: user.admin,
+    contentCreator: user.contentCreator
+  },process.env.RefreshKey,
+  {expiresIn: "365d"})
+}
+
+
 // @route POST /register
 // @desc Register user
 // @access Public
 authController.registerController = async (req,res) =>{
     const {username,password,email} = req.body
+
     if(username == "" || password =="")
     return res.status(400).json({succes: false, message: "Tai khoan hoac mat khau khong duoc de trong"})
     if(email == "")
-    return res.status(400).json({succes: false, message: "Vui long nhap so dien thoai"})
+    return res.status(400).json({succes: false, message: "Vui long nhap email"})
     try {
         const User = await user.findOne({username})
         const Email = await user.findOne({email})
+
         if(User || Email)
         return res.status(400).json({succes: false, message: "Tai khoan hoac so dien thoai da ton tai"})
 
-        const HashPassworld = await argon2.hash(password)
-        const newUser = new user({username,password,email})
+        const salt = await bcrypt.genSalt(10)
+        const hashPassword = await bcrypt.hash(password,salt)
+        const newUser = new user({username,password: hashPassword,email})
         await newUser.save()
+
         return res.status(200).json({succes: true, message: "Tao tai khoan thanh cong"})
     } catch (error) {
         res.status(500).json({succes: false, message: "Loi server"})
@@ -31,13 +56,29 @@ authController.registerController = async (req,res) =>{
 // @desc login 
 // @access Public
 authController.loginController = async (req,res) =>{
-    const {username,password} = req.body
-    const usernameDB = await user.findOne({username})
-    const passwordDB = await user.findOne({password})
-    if(usernameDB && passwordDB)
-      return res.status(200).json({succes: true,message: "login succesfully"})
-    else if(username != usernameDB|| password !=passwordDB)
+  try {
+    const username = await user.findOne({username: req.body.username})
+    const valdPassword = await bcrypt.compare(
+      req.body.password, username.password
+    )
+    
+    if(valdPassword && username){
+      const accessToken = generateAccessToken(username)
+      const refreshToken = refreshAccesToken(username)
+      res.cookie("refreshToken",refreshToken,{
+        httpOnly: true,
+        secure: false,
+        path: "/",
+        sameSite: "strict"
+      })
+      return res.status(200).json({username,accessToken})
+    }
+    else
       return res.status(404).json({succes: false,messae:"tai khoan hoac mat khau khong chinh xac"})
+  } catch (error) {
+    res.status(500).json({succes: false, message: "Loi server"})
+  }
+   
 }
 
 // @route POST /forgotpassword
@@ -54,5 +95,28 @@ authController.forgotPasswordController = async (req,res) =>{
 }
  
 
+authController.RefreshToken = async (req,res)=>{
+  const RefreshToken = req.cookies.refreshToken
+  if(!RefreshToken)
+    return res.status(400).json({succes:false, message:"Chua co token"})
+
+  jwt.verify(RefreshToken,process.env.RefreshKey,(err,user)=>{
+    if(user){
+      const newAccessToken = generateAccessToken(RefreshToken)
+      const newRefreshToken = refreshAccesToken(RefreshToken)
+      res.cookie("refreshToken",newRefreshToken,{
+        httpOnly: true,
+        secure: false,
+        path: "/",
+        sameSite: "strict"
+      })
+      res.status(200).json({accessToken: newAccessToken})
+    }
+    else
+    res.status(400).json({succes:false, messae:"Token khong dung"})
+  })
+}
+
 
 module.exports = authController
+
