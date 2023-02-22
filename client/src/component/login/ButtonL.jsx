@@ -1,14 +1,13 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 const ButtonL = (props) => {
   const { name, type } = props;
-  const handlerSigup = () => {};
 
   return (
     <div>
-      {type === 'signup' ? (
+      {type === "signup" ? (
         <Link to="/auth/Register">
           <button
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type={type}
           >
             {name}
@@ -16,7 +15,7 @@ const ButtonL = (props) => {
         </Link>
       ) : (
         <button
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           type="submit"
         >
           {name}

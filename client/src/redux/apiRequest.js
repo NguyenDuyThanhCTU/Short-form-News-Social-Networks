@@ -1,4 +1,5 @@
-import axios from 'axios';
+import axios from "axios";
+
 import {
   LoginError,
   LoginStart,
@@ -6,14 +7,14 @@ import {
   RegisterError,
   RegisterStart,
   RegisterSuccess,
-} from './AuSlice';
+} from "./AuSlice";
 
 const register = async (user, dispatch, navigate) => {
   dispatch(RegisterStart());
   try {
-    const res = await axios.post('http://localhost:8080/register/', user);
+    const res = await axios.post("http://localhost:8080/register/", user);
     dispatch(RegisterSuccess(res.data));
-    navigate('/');
+    navigate("/auth/Login");
   } catch (error) {
     dispatch(RegisterError());
   }
@@ -24,7 +25,7 @@ const login = async (user, dispatch, navigate) => {
   try {
     const res = await axios.post("http://localhost:8080/login/'", user);
     dispatch(LoginSucces(res.data));
-    navigate('/');
+    navigate("/");
   } catch (error) {
     dispatch(LoginError());
   }

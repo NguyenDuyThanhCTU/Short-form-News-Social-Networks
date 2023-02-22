@@ -1,46 +1,42 @@
-import { useFormik } from 'formik';
-import InputR from './InputR';
-import { AiOutlineCloseCircle } from 'react-icons/ai';
-import { Link, useNavigate } from 'react-router-dom';
-import * as Yup from 'yup';
-import { register } from '../../redux/apiRequest';
-import { useDispatch } from 'react-redux';
+import { useFormik } from "formik";
+import InputR from "./InputR";
+import { AiOutlineCloseCircle } from "react-icons/ai";
+import { Link, useNavigate } from "react-router-dom";
+import * as Yup from "yup";
+import { register } from "../../redux/apiRequest";
+import { useDispatch } from "react-redux";
 
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const formik = useFormik({
+  const Formik = useFormik({
     initialValues: {
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
     },
     validationSchema: Yup.object({
       username: Yup.string()
-        .required('username cannot be empty')
-        .min(5, 'username must be 5 characters or more'),
+        .required("username cannot be empty")
+        .min(5, "username must be 5 characters or more"),
       email: Yup.string()
-        .required('email cannot be empty')
-        .matches(
-          /^([a-zA-Z0-9_-.]+)@([a-zA-Z0-9_-.]+).([a-zA-Z]{2,5})$/,
-          'please enter a valid email address',
-        ),
+        .required("")
+        .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "please enter a valid email address"),
       password: Yup.string()
-        .required('password cannot be empty')
+        .required("")
         .matches(
           /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
-          'password is minimum 8 characters, at least one letter and one number',
+          "password is minimum 8 characters, at least one letter and one number",
         ),
       confirmPassword: Yup.string()
-        .required('password not match')
-        .oneOf([Yup.ref('password'), null], 'password not match'),
+        .required("")
+        .oneOf([Yup.ref("password"), null], "password not match"),
     }),
     onSubmit: (values) => {
       const user = values;
       delete user.confirmPassword;
-      console.log(user);
       register(user, dispatch, navigate);
     },
   });
@@ -58,37 +54,37 @@ const Register = () => {
           <div className="sm:mx-auto sm:w-full sm:max-w-md">
             <h2 className="mt-8 mb-8 text-center text-3xl font-extrabold text-gray-900">Sign Up</h2>
           </div>
-          <form className="space-y-6" action="#" method="POST" onSubmit={formik.handleSubmit}>
+          <form className="space-y-6" action="#" method="POST" onSubmit={Formik.handleSubmit}>
             <InputR
-              id={'username'}
-              name={'Name'}
-              getdata={formik.handleChange}
-              getvalue={formik.values.username}
-              error={formik.errors.username}
+              id={"username"}
+              name={"Name"}
+              getdata={Formik.handleChange}
+              getvalue={Formik.values.username}
+              error={Formik.errors.username}
             />
 
             <InputR
-              id={'email'}
-              name={'Email Adress'}
-              getdata={formik.handleChange}
-              getvalue={formik.values.email}
-              error={formik.errors.email}
+              id={"email"}
+              name={"Email Adress"}
+              getdata={Formik.handleChange}
+              getvalue={Formik.values.email}
+              error={Formik.errors.email}
             />
 
             <InputR
-              id={'password'}
-              name={'Password'}
-              getdata={formik.handleChange}
-              getvalue={formik.values.password}
-              error={formik.errors.password}
+              id={"password"}
+              name={"Password"}
+              getdata={Formik.handleChange}
+              getvalue={Formik.values.password}
+              error={Formik.errors.password}
             />
 
             <InputR
-              id={'confirmPassword'}
-              name={'Confirm Password'}
-              getdata={formik.handleChange}
-              getvalue={formik.values.confirmPassword}
-              error={formik.errors.confirmPassword}
+              id={"confirmPassword"}
+              name={"Confirm Password"}
+              getdata={Formik.handleChange}
+              getvalue={Formik.values.confirmPassword}
+              error={Formik.errors.confirmPassword}
             />
             <div>
               <button
