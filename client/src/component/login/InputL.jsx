@@ -1,5 +1,5 @@
 const InputL = (props) => {
-  const { id, getdata, getvalue, name, value } = props;
+  const { id, getdata, getvalue, name, value, error } = props;
   return (
     <div className="mb-4">
       <label className="block text-gray-700 text-sm font-bold mb-2">{name}</label>
@@ -11,6 +11,7 @@ const InputL = (props) => {
         value={getvalue}
         placeholder={value}
       />
+      <p className="text-red-500">{error}</p>
     </div>
   );
 };

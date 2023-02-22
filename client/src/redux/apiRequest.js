@@ -14,7 +14,7 @@ const register = async (user, dispatch, navigate) => {
   try {
     const res = await axios.post("http://localhost:8080/register/", user);
     dispatch(RegisterSuccess(res.data));
-    navigate("/auth/Login");
+    navigate("/");
   } catch (error) {
     dispatch(RegisterError());
   }
@@ -23,7 +23,7 @@ const register = async (user, dispatch, navigate) => {
 const login = async (user, dispatch, navigate) => {
   dispatch(LoginStart());
   try {
-    const res = await axios.post("http://localhost:8080/login/'", user);
+    const res = await axios.post("http://localhost:8080/login/", user);
     dispatch(LoginSucces(res.data));
     navigate("/");
   } catch (error) {

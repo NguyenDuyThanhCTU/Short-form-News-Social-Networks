@@ -1,14 +1,16 @@
 import { AiOutlineCloseCircle } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import InputL from "./InputL";
 import ButtonL from "./ButtonL";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { login } from "../../redux/apiRequest";
+import { useDispatch, useSelector } from "react-redux";
 
 const Login = () => {
-  // const dispatch = useDispatch();
-  // const navigate = useNavigate();
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  // const res = useSelector((state) => state.Auth.Login.currentUser);
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -16,10 +18,12 @@ const Login = () => {
     },
     validationSchema: Yup.object({
       username: Yup.string().required("username cannot be empty"),
-      password: Yup.string().required("username cannot be empty"),
+      password: Yup.string().required("password cannot be empty"),
     }),
     onSubmit: (values) => {
-      console.log(values);
+      const user = values;
+      login(user, dispatch, navigate);
+      console.log(user);
     },
   });
 
@@ -50,14 +54,14 @@ const Login = () => {
                   getdata={formik.handleChange}
                   getvalue={formik.values.username}
                   value="Enter username ..."
-                  // error={formik.errors.username}
+                  error={formik.errors.username}
                 />
                 {/* input password */}
                 <InputL
                   getdata={formik.handleChange}
                   getvalue={formik.values.password}
                   value="Enter password ..."
-                  // error={formik.errors.username}
+                  error={formik.errors.password}
                   id="password"
                   name="Password"
                 />

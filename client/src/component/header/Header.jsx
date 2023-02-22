@@ -11,10 +11,10 @@ import { AiOutlinePlus } from "react-icons/ai";
 
 function Header() {
   const user = useSelector((state) => state.Auth.login.currentUser);
-  const [isSetting, setSetting] = useState(true);
+  const [isSetting, setSetting] = useState(false);
 
   return (
-    <header className=" h-16 flex justify-around bg-black items-center w-full fixed">
+    <header className=" h-16 flex justify-center bg-black items-center w-full fixed top-0 left-0 right-0 z-50">
       <div className=" text-white flex flex-row items-center w-2/3 px-6 justify-between ">
         {/* Logo */}
         <div className="h-16  w-52 relative m-0">
@@ -38,11 +38,11 @@ function Header() {
         </div>
 
         {/* Right header */}
-        <div className="flex justify-start">
-          <div className="bg-blackl flex items-center h-11 w-60  justify-evenly relative ">
+        <div className="flex justify-start w-80">
+          <div className="bg-blackl flex items-center h-11  justify-evenly relative w-full">
             {user ? (
               <>
-                <p className=" font-ShantellSans">Hi, tforeveralone</p>
+                <p className=" font-ShantellSans">Hi, {user.username}</p>
                 <div>
                   <button className="h-9 w-9" onClick={() => setSetting(!isSetting)}>
                     <img className=" h-full w-full rounded-3xl" src={avt} alt="avt" />
