@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import Logo from "../assets/imgs/Logo.png";
-import avt from "../assets/imgs/1.jpg";
-import { BsSearch } from "react-icons/bs";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { CgProfile } from "react-icons/cg";
-import { SlSettings } from "react-icons/sl";
-import { HiLogout } from "react-icons/hi";
-import { AiOutlinePlus } from "react-icons/ai";
+import React, { useState } from 'react';
+import Logo from '../../../assets/imgs/Logo.png';
+import avt from '../../../assets/imgs/1.jpg';
+import { BsSearch } from 'react-icons/bs';
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { CgProfile } from 'react-icons/cg';
+import { SlSettings } from 'react-icons/sl';
+import { HiLogout } from 'react-icons/hi';
+import { AiOutlinePlus } from 'react-icons/ai';
 
 function Header() {
   const user = useSelector((state) => state.Auth.login.currentUser);

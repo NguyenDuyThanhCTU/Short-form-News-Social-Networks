@@ -1,22 +1,22 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Register from "./component/register/Register";
-import "./input.css";
-import Header from "./component/header/Header";
-import Home from "./component/home/Home";
-import Nav from "./component/nav/Nav";
-import Login from "./component/login/Login";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import './input.css';
+import { PublicRoutes } from './Routes/Index';
+import DefaultLayout from './component/Layout/DefaultLayout';
 
 function App() {
   return (
     <Router>
       <div className="">
-        <Header className="fixed" />
-        <Home />
-        <Nav />
-
         <Routes>
-          <Route path="/auth/Login" element={<Login />} />
-          <Route path="/auth/Register" element={<Register />} />
+          {PublicRoutes.map((route, index) => {
+            const Layout = route.layout || DefaultLayout;
+            const Page = route.component;
+            console.log(<Layout />);
+            console.log(DefaultLayout);
+            return (
+              <Route key={index} path={route.path} element={<Layout route={<Page />}></Layout>} />
+            );
+          })}
         </Routes>
       </div>
     </Router>

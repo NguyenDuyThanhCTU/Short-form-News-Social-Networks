@@ -1,4 +1,4 @@
-const Nav = () => {
+const Sidebar = () => {
   return (
     <nav class="w-56 bg-white shadow-lg h-screen fixed left-0  z-10 top-16">
       <div class="p-4">
@@ -60,4 +60,4 @@ const Nav = () => {
   );
 };
 
-export default Nav;
+export default Sidebar;
