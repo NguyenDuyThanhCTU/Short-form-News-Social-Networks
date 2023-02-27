@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Logo from '../../../assets/imgs/Logo.png';
+import Logo from '../../../assets/imgs/FullLogo-black.png';
 import avt from '../../../assets/imgs/1.jpg';
 import { BsSearch } from 'react-icons/bs';
 import { Link } from 'react-router-dom';

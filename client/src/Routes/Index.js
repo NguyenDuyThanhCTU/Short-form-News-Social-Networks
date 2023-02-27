@@ -7,14 +7,15 @@ import Dashboard from '../page/Dashboard/Dashboard';
 
 const PublicRoutes = [
   { path: '/', component: Home },
-  { path: '/login', component: Login },
+  { path: '/login', component: Login ,Layout: null},
   { path: '/register', component: Register },
-];
-
-const PrivateRoutes = [
   { path: '/following', component: Following },
   { path: '/setting', component: Setting },
   { path: '/dashboard', component: Dashboard },
+];
+
+const PrivateRoutes = [
+ 
 ];
 
 export { PublicRoutes, PrivateRoutes };
