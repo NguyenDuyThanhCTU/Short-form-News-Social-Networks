@@ -2,26 +2,20 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './input.css';
 import { PublicRoutes } from './Routes/Index';
 import DefaultLayout from './component/Layout/DefaultLayout';
-import { Fragment } from 'react';
+import OnlyOneLayout from './component/Layout/OnlyOneLayout';
 
 function App() {
   return (
     <Router>
-      <div className="">
-
+      <div className="h-full w-full">
         <Routes>
-         
-           {PublicRoutes.map((route, index) => {
-            
-            let Layout =  DefaultLayout;
-            if(route.Layout){
-              Layout = route.Layout
+          {PublicRoutes.map((route, index) => {
+            let Layout = DefaultLayout;
+            if (route.Layout) {
+              Layout = route.Layout;
+            } else if (route.Layout === null) {
+              Layout = OnlyOneLayout;
             }
-            else if(route.Layout === null){
-              Layout = Fragment
-            }
-
-
 
             const Page = route.component;
             console.log(<Layout />);
@@ -29,7 +23,7 @@ function App() {
             return (
               <Route key={index} path={route.path} element={<Layout route={<Page />}></Layout>} />
             );
-          })} 
+          })}
         </Routes>
       </div>
     </Router>

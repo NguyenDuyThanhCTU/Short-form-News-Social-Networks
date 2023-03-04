@@ -1,6 +1,6 @@
 const Dashboard = () => {
   return (
-    <div class="flex flex-col h-screen w- bg-gray-100 px-8 py-6 ml-64 absolute top-0 right-0 left-0">
+    <div class="flex flex-col h-screen bg-gray-100 px-8 py-6 ml-64 ">
       {/* <!-- Header --> */}
       <div class="flex items-center justify-between bg-white py-4 px-8 shadow-md">
         <div class="text-2xl font-bold text-gray-800">Dashboard</div>

@@ -1,7 +1,7 @@
-import avt from "../../assets/imgs/1.jpg";
+import avt from '../../component/assets/imgs/1.jpg';
 function profile() {
   return (
-    <div class="bg-white rounded-lg shadow-lg px-8 py-6 ml-64 absolute top-0">
+    <div class="bg-white rounded-lg shadow-lg px-8  h-screen  py-6 ml-64 ">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center">
           <img src={avt} alt="Profile Picture" class="w-20 h-20 rounded-full mr-4" />

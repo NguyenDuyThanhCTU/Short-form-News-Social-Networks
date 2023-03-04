@@ -1,0 +1,2 @@
+đang chỉnh size của SidebarProfile cho nó Full
+chỉnh giao diện /setting và phần còn lại
