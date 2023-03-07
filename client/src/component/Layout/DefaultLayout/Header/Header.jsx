@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import Tippy from '@tippyjs/react/headless';
+// =====
 import Logo from '../../../assets/imgs/FullLogo-black.png';
 import avt from '../../../assets/imgs/1.jpg';
 import { BsSearch } from 'react-icons/bs';
@@ -10,15 +12,15 @@ import { HiLogout } from 'react-icons/hi';
 import { AiOutlinePlus } from 'react-icons/ai';
 
 // =====
-import Tippy from '@tippyjs/react';
+
+import WrapperAccount from '../../../SearchResult/Wrapper';
+import AccountItem from '../../../SearchResult/AccountItem';
 
 function Header() {
-  // const user = useSelector((state) => state.Auth.login.currentUser);
-  const user = 'thanh';
+  const user = useSelector((state) => state.Auth.login.currentUser);
+  // const user = 'thanh';
   const [isSetting, setSetting] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const show = () => setVisible(true);
-  const hide = () => setVisible(false);
+  const [searchResult, setSearchResult] = useState('');
 
   return (
     <header className=" h-16 flex justify-center bg-black items-center w-full fixed top-0 left-0 right-0 z-50">
@@ -31,21 +33,35 @@ function Header() {
         </div>
 
         {/* Search Bar */}
+
         <div className="relative min-w-min px-2 bg-black">
-          <form className="flex flex-row bg-slate-100 rounded-3xl h-12 justify-center items-center w-96">
-            <Tippy content={<span>Tooltip</span>} visible={visible} onClickOutside={hide}>
+          <Tippy
+            visible={searchResult.length > 0}
+            interactive
+            placement="bottom-start"
+            render={(attrs) => (
+              <div className="w-96" tabIndex="-1" {...attrs}>
+                <WrapperAccount>
+                  <AccountItem />
+                  <AccountItem />
+                </WrapperAccount>
+              </div>
+            )}
+          >
+            <form className="flex flex-row bg-slate-100 rounded-3xl h-12 justify-center items-center w-96">
               <input
-                onClick={visible ? hide : show}
                 className="bg-slate-100 h-9 w-72 text-black outline-none"
+                onChange={(e) => setSearchResult(e.target.value)}
                 placeholder="Search news"
               />
-            </Tippy>
-            <span className="w-0.5 h-7 bg-black mx-3"></span>
 
-            <button>
-              <BsSearch className="text-black text-4xl" />
-            </button>
-          </form>
+              <span className="w-0.5 h-7 bg-black mx-3"></span>
+
+              <button>
+                <BsSearch className="text-black text-3xl" />
+              </button>
+            </form>
+          </Tippy>
         </div>
 
         {/* Right header */}
