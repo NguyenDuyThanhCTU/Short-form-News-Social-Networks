@@ -1,5 +1,5 @@
 import { TiTick } from 'react-icons/ti';
-import avt from '../assets/imgs/1.jpg';
+import avt from '../../assets/imgs/1.jpg';
 
 function AccountItem() {
   return (

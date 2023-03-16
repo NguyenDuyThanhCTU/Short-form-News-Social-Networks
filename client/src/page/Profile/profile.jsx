@@ -1,4 +1,4 @@
-import avt from '../../component/assets/imgs/1.jpg';
+import avt from '../../assets/imgs/1.jpg';
 function profile() {
   return (
     <div class="bg-white rounded-lg shadow-lg px-8  h-screen  py-6 ml-64 ">
