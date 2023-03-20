@@ -1,8 +1,8 @@
-import React from 'react';
+import React from 'react'
+import Header from '../DefaultLayout/Header/Header'
 
-function OnlyOneLayout(props) {
-  const { route } = props;
-  return <>{route}</>;
+function OnlyOneLayout({children}) {
+  return <div>{children}</div>
 }
 
-export default OnlyOneLayout;
+export default OnlyOneLayout

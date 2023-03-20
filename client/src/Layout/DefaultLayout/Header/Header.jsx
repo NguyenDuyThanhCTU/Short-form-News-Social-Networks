@@ -19,8 +19,8 @@ import Button from '../../../component/Button/Button'
 import Input from '../../../component/Input/Input'
 
 function Header() {
-  // const user = useSelector((state) => state.Auth.login.currentUser)
-  const user = 'thanh'
+  const user = useSelector((state) => state.Auth.login.currentUser)
+  // const user = 'thanh'
   const [searchResult, setSearchResult] = useState('')
 
   return (
@@ -75,7 +75,15 @@ function Header() {
             {user ? (
               <div className="w-full">
                 <div className="flex justify-around items-center w-full">
-                  <p className=" font-ShantellSans">Hi, {user.username}</p>
+                  {/* <p className=" font-ShantellSans">Hi, {user.username}</p> */}
+                  <Button
+                    to="/upload"
+                    style="inline-flex hover:bg-gray-200  items-center px-4 py-2 bg-white rounded-md font-medium text-black shadow-sm "
+                  >
+                    <AiOutlinePlus className="text-2xl mr-1 " />
+                    Upload
+                  </Button>
+
                   <div class="group">
                     <div>
                       <img

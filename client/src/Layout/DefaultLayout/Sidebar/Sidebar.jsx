@@ -5,11 +5,13 @@ import {AiFillHome} from 'react-icons/ai'
 import {Link} from 'react-router-dom'
 import Button from '../../../component/Button/Button'
 import Discover from '../../../component/Discover/Discover'
+import Footer from '../../../component/Footer/Footer'
+
 const Sidebar = () => {
   const [showSidebar, setShowSidebar] = useState(true)
   const userProfile = false
   const normalLink =
-    'flex items-center gap-3 hover:bg-primary p-3 justify-center xl:justify-start cursor-pointer font-semibold rounded'
+    ' flex items-center gap-3 hover:bg-primary p-3 justify-center xl:justify-start cursor-pointer font-semibold rounded'
 
   return (
     <div>
@@ -28,7 +30,7 @@ const Sidebar = () => {
                   <p className="text-2x1">
                     <AiFillHome />
                   </p>
-                  <span className="capitalize text-xl hidden xl:block">
+                  <span className="capitalize text-xl hidden xl:block text">
                     For you
                   </span>
                 </div>
@@ -50,6 +52,7 @@ const Sidebar = () => {
               </div>
             )}
             <Discover />
+            <Footer />
           </div>
         )}
       </div>

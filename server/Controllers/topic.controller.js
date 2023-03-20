@@ -16,8 +16,11 @@ topicController.Addtopic = async (req, res) => {
 
 topicController.getTopic = async (req, res) => {
   try {
-    const TopicData = await Topic.find({})
-    return res.status(200).json(TopicData)
+    const TopicDatas = await Topic.find({}, 'name icon -_id')
+    const data = TopicDatas.map((TopicData) => TopicData.toObject()) // extract only the name field
+
+    res.json(data)
+    // res.status(200).json(TopicData)
   } catch (error) {
     res.status(500).json({succes: false, message: 'Loi server'})
   }

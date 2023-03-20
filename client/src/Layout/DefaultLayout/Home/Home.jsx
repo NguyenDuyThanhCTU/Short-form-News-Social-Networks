@@ -11,7 +11,9 @@ const Home = () => {
                 src="https://source.unsplash.com/random/800x800"
                 alt="Video thumbnail"
               />
-              <div class="absolute top-0 right-0 bg-black p-2 text-white text-sm">00:15</div>
+              <div class="absolute top-0 right-0 bg-black p-2 text-white text-sm">
+                00:15
+              </div>
             </div>
             <div class="p-4">
               <div class="flex items-center mb-4">
@@ -48,7 +50,9 @@ const Home = () => {
                 src="https://source.unsplash.com/random/800x800"
                 alt="Video thumbnail"
               />
-              <div class="absolute top-0 right-0 bg-black p-2 text-white text-sm">00:15</div>
+              <div class="absolute top-0 right-0 bg-black p-2 text-white text-sm">
+                00:15
+              </div>
             </div>
             <div class="p-4">
               <div class="flex items-center mb-4">
@@ -85,7 +89,9 @@ const Home = () => {
                 src="https://source.unsplash.com/random/800x800"
                 alt="Video thumbnail"
               />
-              <div class="absolute top-0 right-0 bg-black p-2 text-white text-sm">00:15</div>
+              <div class="absolute top-0 right-0 bg-black p-2 text-white text-sm">
+                00:15
+              </div>
             </div>
             <div class="p-4">
               <div class="flex items-center mb-4">
@@ -118,7 +124,7 @@ const Home = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

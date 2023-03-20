@@ -8,7 +8,7 @@ const refreshToken = express.Router()
 
 loginRoute.post('/login', authController.loginController)
 
-registerRoute.post('/register', authController.topic)
+registerRoute.post('/register', authController.registerController)
 
 forgotpasswordRoute.post(
   '/forgotpassword',

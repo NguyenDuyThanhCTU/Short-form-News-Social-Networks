@@ -1,15 +1,14 @@
-import React from 'react';
-import SidebarProfile from './Sidebar/SidebarProfile';
+import React from 'react'
+import SidebarProfile from './Sidebar/SidebarProfile'
 
-function ProfileLayout(props) {
-  const { route } = props;
+function ProfileLayout({children}) {
   return (
     <div className="">
       <SidebarProfile />
 
-      <div className="">{route}</div>
+      <div className="">{children}</div>
     </div>
-  );
+  )
 }
 
-export default ProfileLayout;
+export default ProfileLayout

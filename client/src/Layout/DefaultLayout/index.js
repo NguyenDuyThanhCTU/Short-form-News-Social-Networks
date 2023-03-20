@@ -1,6 +1,8 @@
 import Header from './Header/Header'
 import Sidebar from './Sidebar/Sidebar'
 import Home from './Home/Home'
+import VideoCard from './VideoCard/VideoCard'
+
 function DefaultLayout({children}) {
   return (
     <div>
@@ -9,7 +11,11 @@ function DefaultLayout({children}) {
         <div className="h-[92vh] overflow-hidden x1:hover:overflow-auto">
           <Sidebar />
         </div>
-        <div className></div>
+
+        <div className="flex flex-col gap-10 videos h-full w-2/3">
+          {children}
+        </div>
+        <div></div>
       </div>
     </div>
   )
