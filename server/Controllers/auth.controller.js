@@ -1,4 +1,4 @@
-const user = require('../Models/user')
+const user = require('../Models/user.model')
 const bcrypt = require('bcrypt')
 
 const jwt = require('jsonwebtoken')
@@ -33,7 +33,7 @@ refreshAccesToken = (user) => {
 // @route POST /register
 // @desc Register user
 // @access Public
-authController.registerController = async (req, res) => {
+authController.signupController = async (req, res) => {
   const {username, password, email} = req.body
 
   try {

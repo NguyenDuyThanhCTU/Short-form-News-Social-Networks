@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const TopicSchema = new Schema({
+const HashTagSchema = new Schema({
   name: {
     type: String,
     require: true,
@@ -17,4 +17,4 @@ const TopicSchema = new Schema({
   },
 })
 
-module.exports = mongoose.model('topic', TopicSchema)
+module.exports = mongoose.model('hashTag', HashTagSchema)

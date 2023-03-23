@@ -1,14 +1,14 @@
 const express = require('express')
-const authController = require('../Controllers/auth.controller')
+const authController = require('../../Controllers/auth.controller')
 
 const loginRoute = express.Router()
-const registerRoute = express.Router()
+const signupRoute = express.Router()
 const forgotpasswordRoute = express.Router()
 const refreshToken = express.Router()
 
 loginRoute.post('/login', authController.loginController)
 
-registerRoute.post('/register', authController.registerController)
+signupRoute.post('/signup', authController.signupController)
 
 forgotpasswordRoute.post(
   '/forgotpassword',
@@ -17,4 +17,4 @@ forgotpasswordRoute.post(
 
 refreshToken.post('/refreshtoken', authController.RefreshToken)
 
-module.exports = {registerRoute, loginRoute, forgotpasswordRoute, refreshToken}
+module.exports = {signupRoute, loginRoute, forgotpasswordRoute, refreshToken}

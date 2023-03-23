@@ -1,29 +1,44 @@
 const {
   loginRoute,
-  registerRoute,
+  signupRoute,
   forgotpasswordRoute,
   refreshToken,
-} = require('./auth.routes')
-const {getAllUser} = require('./user.routes')
-const {addTopicRoute, allTopicRoute} = require('./topic.routes')
+} = require('./publicRoute/auth.route')
 
-const apiRouter = (app) => {
+const {getAllUser} = require('./privateRoute/user.route')
+
+const {
+  AllHashtagRoute,
+  AddHashtagRoute,
+} = require('./privateRoute/hashtag.route')
+
+const {
+  getRoleRoute,
+  newRoleRoute,
+  addRoleRoute,
+} = require('./privateRoute/role.route')
+
+const publicRoute = (app) => {
   //Auth routes
   app.use(loginRoute)
 
-  app.use(registerRoute)
+  app.use(signupRoute)
 
   app.use(forgotpasswordRoute)
 
   app.use(refreshToken)
+}
+const privateRoute = (app) => {
+  //HashTag routes
+  app.use(AllHashtagRoute)
+  app.use(AddHashtagRoute)
 
   //User routes
   app.use(getAllUser)
-
-  //Topic routes
-
-  app.use(addTopicRoute)
-  app.use(allTopicRoute)
+  // Role
+  app.use(getRoleRoute)
+  app.use(newRoleRoute)
+  app.use(addRoleRoute)
 }
 
-module.exports = apiRouter
+module.exports = {publicRoute, privateRoute}
