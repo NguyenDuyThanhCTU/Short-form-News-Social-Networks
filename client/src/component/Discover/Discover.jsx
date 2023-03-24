@@ -7,7 +7,7 @@ function Discover() {
   const [data, setData] = useState([])
   useEffect(() => {
     axios
-      .get('http://localhost:8080/allTopic/')
+      .get('http://localhost:8080/alltopic/')
       .then((res) => setData(res.data))
       .catch((err) => console.log('Failed to get data from server', err))
   }, [])

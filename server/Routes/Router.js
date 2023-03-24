@@ -10,7 +10,9 @@ const {getAllUser} = require('./privateRoute/user.route')
 const {
   AllHashtagRoute,
   AddHashtagRoute,
-} = require('./privateRoute/hashtag.route')
+  AddTopicRoute,
+  AllTopicRoute,
+} = require('./privateRoute/content.route')
 
 const {
   getRoleRoute,
@@ -29,9 +31,11 @@ const publicRoute = (app) => {
   app.use(refreshToken)
 }
 const privateRoute = (app) => {
-  //HashTag routes
+  //Content routes
   app.use(AllHashtagRoute)
   app.use(AddHashtagRoute)
+  app.use(AddTopicRoute)
+  app.use(AllTopicRoute)
 
   //User routes
   app.use(getAllUser)

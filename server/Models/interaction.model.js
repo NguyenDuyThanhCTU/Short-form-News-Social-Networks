@@ -1,14 +1,6 @@
 const mongoose = require('mongoose')
 
-const InteractiveSchema = mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  },
-  news: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'News',
-  },
+const ViewSchema = mongoose.Schema({
   view_list: [
     {
       watchedBy: {
@@ -21,6 +13,13 @@ const InteractiveSchema = mongoose.Schema({
       },
     },
   ],
+  news: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'News',
+  },
+})
+
+const LikeSchema = mongoose.Schema({
   like_list: [
     {
       likedBy: {
@@ -33,6 +32,13 @@ const InteractiveSchema = mongoose.Schema({
       },
     },
   ],
+  news: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'News',
+  },
+})
+
+const CommentSchema = mongoose.Schema({
   comment_list: [
     {
       commentedBy: {
@@ -63,6 +69,14 @@ const InteractiveSchema = mongoose.Schema({
       ],
     },
   ],
+  news: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'News',
+  },
 })
 
-module.exports = mongoose.model('Interaction', InteractiveSchema)
+const View = mongoose.model('View', ViewSchema)
+const Like = mongoose.model('Like', LikeSchema)
+const Comment = mongoose.model('Comment', CommentSchema)
+
+module.exports = {View, Like, Comment}
