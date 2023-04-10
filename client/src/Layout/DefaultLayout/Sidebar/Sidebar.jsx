@@ -6,9 +6,11 @@ import {Link} from 'react-router-dom'
 import Button from '../../../component/Button/Button'
 import Discover from '../../../component/Discover/Discover'
 import Footer from '../../../component/Footer/Footer'
+import {useSelector} from 'react-redux'
 
 const Sidebar = () => {
   const [showSidebar, setShowSidebar] = useState(true)
+  const isUser = useSelector((state) => state.Auth.login.currentUser)
   const userProfile = false
   const normalLink =
     ' flex items-center gap-3 hover:bg-primary p-3 justify-center xl:justify-start cursor-pointer font-semibold rounded'
@@ -41,14 +43,16 @@ const Sidebar = () => {
                 <p className="text-gray-400 ">
                   Đăng nhập để yêu thích & bình luận
                 </p>
-                <div className="w-full">
-                  <Button
-                    style="bg-white text-lg text-red-500 border-[1px] border-red-500 font-semibold px-6 py-3 rounded-md w-full outline-none mt-8 inline-block text-center hover:text-white hover:bg-red-500"
-                    to="/login"
-                  >
-                    Log In
-                  </Button>
-                </div>
+                {!isUser && (
+                  <div className="w-full">
+                    <Button
+                      style="bg-white text-lg text-red-500 border-[1px] border-red-500 font-semibold px-6 py-3 rounded-md w-full outline-none mt-8 inline-block text-center hover:text-white hover:bg-red-500"
+                      to="/login"
+                    >
+                      Log In
+                    </Button>
+                  </div>
+                )}
               </div>
             )}
             <Discover />

@@ -1,36 +1,92 @@
 import axios from 'axios'
 import React, {useEffect, useState} from 'react'
 import {FaCloudUploadAlt} from 'react-icons/fa'
+import {useDispatch, useSelector} from 'react-redux'
+import {NewsPost} from '../../redux/NewsSlice'
+import {PostNews} from '../../redux/apiRequest'
+import {useNavigate} from 'react-router-dom'
+import s3 from '../../config/aws.config'
 
-function Upload() {
+function Post() {
   const [isLoading, setIsLoading] = useState(false)
   const [videoAsset, setvideoAsset] = useState(false)
+  const [isVideo, setIsVideo] = useState(null)
   const [ErrorUpload, setErrorUpload] = useState(false)
   const [isContinue, setIsContinue] = useState(false)
   const [data, setData] = useState([])
-  const [Saving, setSaving] = useState(false)
   const [Caption, setCaption] = useState('')
   const [Topic, setTopic] = useState([])
+  const [isSubmit, setIsSubmit] = useState(false)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const res = useSelector((state) => state.News.PostDataReq)
+  const idUser = useSelector((state) => state.Auth.login.currentUser._id)
+  const idVideo = useSelector((state) => state.News.PostDataRes.currentPost)
   const uploadVideo = async (e) => {
     const SelectedFile = e.target.files[0]
     const filetypes = ['video/mp4', 'video/webm', 'video/ogg']
 
     if (filetypes.includes(SelectedFile.type)) {
+      setErrorUpload(false)
       setvideoAsset(URL.createObjectURL(SelectedFile))
-      // console.log('upload here')
+      setIsVideo(SelectedFile)
     } else {
       setIsLoading(false)
       setErrorUpload(true)
     }
   }
+
   function handleDiscard() {
     setCaption('')
-  }
-  function handlePost() {
-    setSaving(true)
-    console.log(videoAsset, Caption, Topic)
+    setIsSubmit(false)
   }
 
+  function handlePost() {
+    const newsPost = {
+      caption: Caption,
+      topic: Topic,
+      user: idUser,
+      video: '',
+    }
+
+    dispatch(NewsPost(newsPost))
+    setIsSubmit(true)
+  }
+
+  function handleFinish() {
+    PostNews(res, dispatch, navigate)
+    setTimeout(() => {
+      const filetype = isVideo.type
+
+      const bucketName = 'shortnews1'
+
+      const objectKey = `${idUser}/${idVideo}`
+      // const objectKey = 'video/test'
+      console.log(objectKey)
+      s3.upload(
+        {
+          Bucket: bucketName,
+          Key: objectKey,
+          Body: isVideo,
+          ACL: 'public-read',
+          ContentType: filetype,
+        },
+        (err, data) => {
+          if (err) {
+            console.error(err)
+            // res.status(500).send(err)
+          } else {
+            console.log(
+              `Video uploaded successfully. File location: ${data.Location}`
+            )
+            // res.status(200).send('Video uploaded successfully')
+          }
+        }
+      ) 
+    }, 5000)
+  }
+  console.log(idVideo)
   useEffect(() => {
     axios
       .get('http://localhost:8080/alltopic')
@@ -40,6 +96,10 @@ function Upload() {
       .catch((err) => console.log(err))
   }, [])
 
+  // if (idVideo) {
+
+  // }
+  // console.log(idVideo)
   return (
     <div className="flex w-full h-full absolute left-0 top-[60px] lg:top-[70px] mb-10 pt-10 lg:pt-20 bg-[#F8F8F8] justify-center ">
       {isContinue ? (
@@ -125,9 +185,9 @@ function Upload() {
             >
               {data.map((item) => (
                 <option
-                  key={item.name}
+                  key={item._id}
                   className=" outline-none capitalize bg-white text-gray-700 text-md p-2 hover:bg-slate-300"
-                  value={item.name}
+                  value={item._id}
                 >
                   {item.name}
                 </option>
@@ -141,14 +201,25 @@ function Upload() {
               >
                 Discard
               </button>
-              <button
-                //disabled={videoAsset?.url ? false : true}
-                onClick={handlePost}
-                type="button"
-                className="bg-[#F51997] text-white text-md font-medium p-2 rounded w-28 lg:w-44 outline-none"
-              >
-                {Saving ? 'Posting...' : 'Post'}
-              </button>
+              {isSubmit ? (
+                <button
+                  //disabled={videoAsset?.url ? false : true}
+                  onClick={handleFinish}
+                  type="button"
+                  className="bg-[#df6cad] hover:bg-red-500 focus:outline-none focus:shadow-outline text-white text-md font-medium p-2 rounded w-28 lg:w-44 outline-none"
+                >
+                  Finish
+                </button>
+              ) : (
+                <button
+                  //disabled={videoAsset?.url ? false : true}
+                  onClick={handlePost}
+                  type="button"
+                  className="bg-[#F51997] text-white text-md font-medium p-2 rounded w-28 lg:w-44 outline-none"
+                >
+                  Post
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -157,4 +228,4 @@ function Upload() {
   )
 }
 
-export default Upload
+export default Post

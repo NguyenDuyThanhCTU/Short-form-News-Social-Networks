@@ -1,4 +1,5 @@
 const user = require('../Models/user.model')
+const Role = require('../Models/role.model')
 const bcrypt = require('bcrypt')
 
 const jwt = require('jsonwebtoken')
@@ -7,9 +8,8 @@ const authController = {}
 generateAccessToken = (user) => {
   return jwt.sign(
     {
-      id: user._id,
-      admin: user.admin,
-      contentCreator: user.contentCreator,
+      id: user.id,
+      role: user.role,
     },
     process.env.SecretKey,
     {
@@ -21,9 +21,8 @@ generateAccessToken = (user) => {
 refreshAccesToken = (user) => {
   return jwt.sign(
     {
-      id: user._id,
-      admin: user.admin,
-      contentCreator: user.contentCreator,
+      id: user.id,
+      role: user.role,
     },
     process.env.RefreshKey,
     {expiresIn: '365d'}
@@ -34,6 +33,7 @@ refreshAccesToken = (user) => {
 // @desc Register user
 // @access Public
 authController.signupController = async (req, res) => {
+  const GuestRole = '6424372247c111f38524aabc'
   const {username, password, email} = req.body
 
   try {
@@ -48,8 +48,16 @@ authController.signupController = async (req, res) => {
 
     const salt = await bcrypt.genSalt(10)
     const hashPassword = await bcrypt.hash(password, salt)
-    const newUser = new user({username, password: hashPassword, email})
-    await newUser.save()
+    const newUser = new user({
+      username,
+      password: hashPassword,
+      email,
+      role: GuestRole,
+    })
+    const savedUser = await newUser.save()
+
+    const newRole = Role.findById(GuestRole)
+    await newRole.updateOne({$push: {user: savedUser._id}})
 
     return res.status(200).json(newUser)
   } catch (error) {
@@ -68,16 +76,22 @@ authController.loginController = async (req, res) => {
     const valdPassword = await bcrypt.compare(password, User.password)
 
     if (valdPassword) {
-      const accessToken = generateAccessToken({username})
-      const refreshToken = refreshAccesToken({username})
+      const accessToken = generateAccessToken(User)
+      const refreshToken = refreshAccesToken(User)
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
         path: '/',
         sameSite: 'strict',
       })
-
-      res.status(200).json({username, accessToken})
+      if (User.username === 'Admin') {
+        const {password, following, follower, block, news, ...others} =
+          User._doc
+        res.status(200).json({...others, accessToken, refreshToken})
+      } else {
+        const {password, ...others} = User._doc
+        res.status(200).json({...others, accessToken, refreshToken})
+      }
     } else
       return res.status(401).json({
         succes: false,

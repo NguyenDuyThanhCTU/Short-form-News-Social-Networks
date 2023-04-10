@@ -20,6 +20,8 @@ const {
   addRoleRoute,
 } = require('./privateRoute/role.route')
 
+const {PostRoute} = require('./privateRoute/Post.route')
+
 const publicRoute = (app) => {
   //Auth routes
   app.use(loginRoute)
@@ -30,6 +32,7 @@ const publicRoute = (app) => {
 
   app.use(refreshToken)
 }
+
 const privateRoute = (app) => {
   //Content routes
   app.use(AllHashtagRoute)
@@ -43,6 +46,9 @@ const privateRoute = (app) => {
   app.use(getRoleRoute)
   app.use(newRoleRoute)
   app.use(addRoleRoute)
+
+  //Post
+  app.use(PostRoute)
 }
 
 module.exports = {publicRoute, privateRoute}

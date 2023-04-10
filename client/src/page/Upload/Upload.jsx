@@ -1,55 +1,35 @@
-import axios from 'axios'
 import React, {useEffect, useState} from 'react'
 import {FaCloudUploadAlt} from 'react-icons/fa'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import option1 from '../../assets/imgs/2.jpg'
 import option2 from '../../assets/imgs/3.jpg'
 import option3 from '../../assets/imgs/4.jpg'
 import option4 from '../../assets/imgs/5.jpg'
 import option5 from '../../assets/imgs/6.jpg'
-import {NewsUp, NewsPost} from '../../redux/NewsSlice'
+import {NewsUp} from '../../redux/NewsSlice'
+import Post from '../Post/Post'
+import {TbPlayerTrackNext} from 'react-icons/tb'
 
 function Upload() {
-  //First UI
+  let imgURL = ''
   const [title, setTitle] = useState('')
   const [introduction, setIntroduction] = useState('')
   const [body, setBody] = useState('')
   const [hashtag, setHashtag] = useState('')
   const [conclusion, setConclusion] = useState('')
-  const [image, setImage] = useState('')
   const [errorUp, setErrorUp] = useState(false)
   const [option, setOption] = useState(0)
-  // --
-
-  const [isLoading, setIsLoading] = useState(false)
-  const [videoAsset, setvideoAsset] = useState(false)
-  const [ErrorUpload, setErrorUpload] = useState(false)
   const [isContinue, setIsContinue] = useState(true)
-  const [data, setData] = useState([])
-  const [Saving, setSaving] = useState(false)
-  const [Caption, setCaption] = useState('')
-  const [Topic, setTopic] = useState([])
-  const [video, setVideo] = useState('')
+
+  const [isPreview, setIsPreview] = useState(false)
+  const [isNext, setIsNext] = useState(false)
+  const DataNews = useSelector((state) => state.News)
 
   const isSelect = 'absolute inset-0 bg-black  opacity-75 transition-opacity'
   const notSelect =
     'absolute inset-0 bg-black opacity-0 hover:opacity-25 transition-opacity'
   const displayImg = 'relative border-gray-500 border-[1px]'
   const dispatch = useDispatch()
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    const newsletter = {
-      title: title,
-      introduction: introduction,
-      body: body,
-      hashtag: hashtag,
-      conclusion: conclusion,
-      image: image,
-      option: option,
-    }
-    dispatch(NewsUp(newsletter))
-    setIsContinue(false)
-  }
 
   const uploadImage = async (e) => {
     const selectImage = e.target.files[0]
@@ -57,108 +37,166 @@ function Upload() {
 
     if (filetypes.includes(selectImage.type)) {
       setErrorUp(false)
-      setImage(selectImage)
+      imgURL = URL.createObjectURL(selectImage)
+      // setImage()
     } else {
       setErrorUp(true)
     }
   }
 
-  //Second UI
+  const handleSubmit = (e) => {
+    e.preventDefault()
 
-  const uploadVideo = async (e) => {
-    const SelectedFile = e.target.files[0]
-    const filetypes = ['video/mp4', 'video/webm', 'video/ogg']
-
-    if (filetypes.includes(SelectedFile.type)) {
-      setvideoAsset(URL.createObjectURL(SelectedFile))
-      setVideo(SelectedFile)
-    } else {
-      setIsLoading(false)
-      setErrorUpload(true)
+    const newsletter = {
+      title: title,
+      introduction: introduction,
+      body: body,
+      hashtag: hashtag,
+      conclusion: conclusion,
+      image: imgURL,
+      option: option,
     }
+    dispatch(NewsUp(newsletter))
+    setIsNext(true)
+    console.log(newsletter)
   }
-
-  function handleDiscard() {
-    setCaption('')
-  }
-
-  function handlePost() {
-    const dataPost = {
-      video: video,
-      caption: Caption,
-      topic: Topic,
-    }
-    setSaving(true)
-    dispatch(NewsPost(dataPost))
-  }
-
-  useEffect(() => {
-    axios
-      .get('http://localhost:8080/alltopic')
-      .then((res) => {
-        setData(res.data)
-      })
-      .catch((err) => console.log(err))
-  }, [])
 
   return (
-    <div className="flex w-full h-full absolute left-0 top-[60px] lg:top-[70px] mb-10 pt-10 lg:pt-20 bg-[#F8F8F8] justify-center ">
+    <div className="flex w-full h-full absolute left-0 top-[60px] lg:top-[70px] mb-10 pt-10 lg:pt-10 bg-white justify-center ">
       {isContinue ? (
-        <div className="flex flex-wrap">
-          <div className="basis-1/2 flex flex-wrap pt-20 pl-10">
-            <div class="w-1/2 p-2">
-              <div class={displayImg} onClick={() => setOption(1)}>
-                <img src={option1} alt="your-image-alt" class="w-full " />
-                {option === 1 ? (
-                  <div class={isSelect}></div>
-                ) : (
-                  <div class={notSelect}></div>
-                )}
+        <div className="flex flex-wrap bg-white w-full">
+          {isPreview ? (
+            <div className="basis-2/3 flex flex-wrap pl-10">
+              <div className="pl-1 flex flex-wrap w-[1228px] h-[930px] bg-white">
+                <div class="flex flex-col h-screen">
+                  <nav class="flex justify-between items-center bg-gray-800 text-white p-4">
+                    <div class="text-xl font-bold">{DataNews.title}</div>
+                    <div>
+                      <a href="#" class="mx-2 hover:text-gray-300">
+                        Home
+                      </a>
+                      <a href="#" class="mx-2 hover:text-gray-300">
+                        Categories
+                      </a>
+                      <a href="#" class="mx-2 hover:text-gray-300">
+                        Contact Us
+                      </a>
+                    </div>
+                  </nav>
+                  <div class="flex flex-1">
+                    <div class="w-1/4 bg-gray-100 p-4">
+                      <h3 class="text-lg font-bold mb-4">Conclusion</h3>
+                      <ul>
+                        <li class="mb-2">
+                          <a href="#">Politics</a>
+                        </li>
+                        <li class="mb-2">
+                          <a href="#">Sports</a>
+                        </li>
+                        <li class="mb-2">
+                          <a href="#">Business</a>
+                        </li>
+                        <li class="mb-2">
+                          <a href="#">Technology</a>
+                        </li>
+                        <li class="mb-2">
+                          <a href="#">Entertainment</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="flex-1 p-4">
+                      <h2 class="text-xl font-bold mb-4">
+                        {DataNews.introduction}
+                      </h2>
+                      <div class="border-b border-gray-300 mb-4 pb-4">
+                        <h3 class="text-lg font-bold mb-2">
+                          <a href="#">Lorem ipsum dolor sit amet</a>
+                        </h3>
+                        <p class="text-gray-700 text-sm mb-2">
+                          By John Doe | March 27, 2023
+                        </p>
+                        <p class="text-gray-700">{DataNews.body}</p>
+                      </div>
+                    </div>
+                    <div>
+                      <img
+                        class="mx-auto rounded-lg shadow-lg"
+                        src={DataNews.image}
+                      />
+                    </div>
+                  </div>
+                  <footer class="bg-gray-800 text-white p-4">
+                    <div class="flex justify-center">
+                      <p>&copy; 2023 My E-Newspaper</p>
+                    </div>
+                  </footer>
+                </div>
               </div>
             </div>
-            <div class="w-1/2 p-2">
-              <div class={displayImg} onClick={() => setOption(2)}>
-                <img src={option2} alt="your-image-alt" class="w-full " />
-                {option === 2 ? (
-                  <div class={isSelect}></div>
-                ) : (
-                  <div class={notSelect}></div>
-                )}
+          ) : (
+            <div className="basis-2/3 flex flex-wrap pl-10">
+              <div className="w-full pb-5">
+                <p className="text-center text-5xl font-bold text-gray-800 leading-tight tracking-tight">
+                  Select Display Layout
+                </p>
+              </div>
+              <div className=" flex flex-wrap " y>
+                {' '}
+                <div class="w-1/2 p-2">
+                  <div class={displayImg} onClick={() => setOption(1)}>
+                    <img src={option1} alt="your-image-alt" class="w-full " />
+                    {option === 1 ? (
+                      <div class={isSelect}></div>
+                    ) : (
+                      <div class={notSelect}></div>
+                    )}
+                  </div>
+                </div>
+                <div class="w-1/2 p-2">
+                  <div class={displayImg} onClick={() => setOption(2)}>
+                    <img src={option2} alt="your-image-alt" class="w-full " />
+                    {option === 2 ? (
+                      <div class={isSelect}></div>
+                    ) : (
+                      <div class={notSelect}></div>
+                    )}
+                  </div>
+                </div>
+                <div class="w-1/2 p-2">
+                  <div class={displayImg} onClick={() => setOption(3)}>
+                    <img src={option3} alt="your-image-alt" class="w-full " />
+                    {option === 3 ? (
+                      <div class={isSelect}></div>
+                    ) : (
+                      <div class={notSelect}></div>
+                    )}
+                  </div>
+                </div>
+                <div class="w-1/2 p-2">
+                  <div class={displayImg} onClick={() => setOption(4)}>
+                    <img src={option4} alt="your-image-alt" class="w-full " />
+                    {option === 4 ? (
+                      <div class={isSelect}></div>
+                    ) : (
+                      <div class={notSelect}></div>
+                    )}
+                  </div>
+                </div>
+                <div class="w-1/2 p-2">
+                  <div class={displayImg} onClick={() => setOption(5)}>
+                    <img src={option5} alt="your-image-alt" class="w-full " />
+                    {option === 5 ? (
+                      <div class={isSelect}></div>
+                    ) : (
+                      <div class={notSelect}></div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="w-1/2 p-2">
-              <div class={displayImg} onClick={() => setOption(3)}>
-                <img src={option3} alt="your-image-alt" class="w-full " />
-                {option === 3 ? (
-                  <div class={isSelect}></div>
-                ) : (
-                  <div class={notSelect}></div>
-                )}
-              </div>
-            </div>
-            <div class="w-1/2 p-2">
-              <div class={displayImg} onClick={() => setOption(4)}>
-                <img src={option4} alt="your-image-alt" class="w-full " />
-                {option === 4 ? (
-                  <div class={isSelect}></div>
-                ) : (
-                  <div class={notSelect}></div>
-                )}
-              </div>
-            </div>
-            <div class="w-1/2 p-2">
-              <div class={displayImg} onClick={() => setOption(5)}>
-                <img src={option5} alt="your-image-alt" class="w-full " />
-                {option === 5 ? (
-                  <div class={isSelect}></div>
-                ) : (
-                  <div class={notSelect}></div>
-                )}
-              </div>
-            </div>
-          </div>
+          )}
 
-          <div class="basis-1/2 w-full max-w-md mx-auto mt-16px p-6 rounded-lg shadow-xl  bg-white">
+          <div class="h-[56rem] basis-1/3 w-full max-w-md mx-auto mt-16px p-6 rounded-lg shadow-xl  bg-white">
             <form onSubmit={handleSubmit}>
               <h2 class="text-2xl font-bold text-gray-700 mb-2 text-center">
                 Upload New
@@ -249,14 +287,26 @@ function Upload() {
                   </p>
                 )}
                 <div className="mb-4 flex justify-around mt-6">
+                  {isNext ? (
+                    <button
+                      onClick={() => setIsContinue(false)}
+                      class="bg-blue-300 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    >
+                      Next
+                      <TbPlayerTrackNext className="text-red ml-2 inline-block" />
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    >
+                      Submit
+                    </button>
+                  )}
+
                   <button
                     type="submit"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  >
-                    Submit
-                  </button>
-                  <button
-                    type="submit"
+                    onClick={() => setIsPreview(true)}
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                   >
                     Preview
@@ -273,113 +323,7 @@ function Upload() {
           </div>
         </div>
       ) : (
-        <div className=" bg-white rounded-lg xl:h-[80vh] flex gap-6 flex-wrap justify-center items-center p-14 pt-6">
-          <div>
-            <div>
-              <p className="text-2xl font-bold">Upload Video</p>
-              <p className="text-md text-gray-400 mt-1">
-                Post a video to your account
-              </p>
-            </div>
-            <div className=" border-dashed rounded-xl border-4 border-gray-200 flex flex-col justify-center items-center  outline-none mt-10 w-[260px] h-[458px] p-10 cursor-pointer hover:border-red-300 hover:bg-gray-100">
-              {isLoading ? (
-                <div>
-                  <p>Loading...</p>
-                </div>
-              ) : (
-                <div>
-                  {videoAsset ? (
-                    <div>
-                      <video
-                        src={videoAsset}
-                        loop
-                        controls
-                        className="rounded-r-xl h-[450px] mt-16 bg-black"
-                      ></video>
-                    </div>
-                  ) : (
-                    <label className="cursor-pointer">
-                      <div className="flex flex-col items-center justify-center h-full">
-                        <div className="flex flex-col justify-center items-center">
-                          <p className="font-bold text-xl">
-                            <FaCloudUploadAlt className="text-gray-300 text-6xl" />
-                          </p>
-                          <p className="text-xl font-semibold">
-                            Select video to upload
-                          </p>
-                        </div>
-                        <p className="text-gray-400 text-center mt-10 text-sm leading-10">
-                          MP4 or WebM or ogg <br />
-                          720x1280 resolution or higher <br />
-                          Up to 10 minutes <br />
-                          Less than 2 GB
-                        </p>
-                        <p className="bg-[#F51997] text-center mt-8 rounded text-white text-md font-medium p-2 w-52 outline-none">
-                          Select file
-                        </p>
-                      </div>
-                      <input
-                        type="file"
-                        name="upload-video"
-                        onChange={(e) => uploadVideo(e)}
-                        className="w-0 h-0"
-                      />
-                    </label>
-                  )}
-                </div>
-              )}
-            </div>
-            {ErrorUpload && (
-              <p className="text-center text-xl text-red-400 font-semibold mt-4 w-[260px]">
-                Please select an video file (mp4 or webm or ogg)
-              </p>
-            )}
-          </div>
-          <div className="flex flex-col gap-3 pb-10">
-            <label className="text-md font-medium ">Caption</label>
-            <input
-              type="text"
-              value={Caption}
-              onChange={(e) => setCaption(e.target.value)}
-              className="rounded lg:after:w-650 outline-none text-md border-2 border-gray-200 p-2"
-            />
-            <label className="text-md font-medium ">Choose a topic</label>
-
-            <select
-              onChange={(e) => {
-                setTopic(e.target.value)
-              }}
-              className="outline-none lg:w-650 border-2 border-gray-200 text-md capitalize lg:p-4 p-2 rounded cursor-pointer"
-            >
-              {data.map((item) => (
-                <option
-                  key={item.name}
-                  className=" outline-none capitalize bg-white text-gray-700 text-md p-2 hover:bg-slate-300"
-                  value={item.name}
-                >
-                  {item.name}
-                </option>
-              ))}
-            </select>
-            <div className="flex gap-6 mt-10">
-              <button
-                onClick={handleDiscard}
-                type="button"
-                className="border-gray-300 border-2 text-md font-medium p-2 rounded w-28 lg:w-44 outline-none"
-              >
-                Discard
-              </button>
-              <button
-                //disabled={videoAsset?.url ? false : true}
-                onClick={handlePost}
-                type="button"
-                className="bg-[#F51997] text-white text-md font-medium p-2 rounded w-28 lg:w-44 outline-none"
-              >
-                {Saving ? 'Posting...' : 'Post'}
-              </button>
-            </div>
-          </div>
-        </div>
+        <Post />
       )}
     </div>
   )

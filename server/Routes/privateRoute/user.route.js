@@ -6,7 +6,7 @@ const getAllUser = express.Router()
 
 getAllUser.get(
   '/alluser',
-  middlewareController.VerifyAdminToken,
+  middlewareController.VerifyRole,
   userController.getAllUser
 )
 

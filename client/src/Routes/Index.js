@@ -8,6 +8,8 @@ import Profile from '../page/Profile/Profile'
 import Upload from '../page/Upload/Upload'
 import ProfileLayout from '../Layout/ProfileLayout'
 import OnlyHeader from '../Layout/OnlyHeader'
+import Detail from '../page/Detail/Detail'
+import OnlyOneLayout from '../Layout/OnlyOneLayout/index'
 
 const PublicRoutes = [
   {path: '/', component: VideoCard},
@@ -18,6 +20,7 @@ const PublicRoutes = [
   {path: '/dashboard', component: Dashboard, Layout: ProfileLayout},
   {path: '/profile', component: Profile, Layout: ProfileLayout},
   {path: '/upload', component: Upload, Layout: OnlyHeader},
+  {path: '/news/:id', component: Detail, Layout: OnlyOneLayout},
 ]
 
 const PrivateRoutes = []

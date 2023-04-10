@@ -23,7 +23,19 @@ export const VideoCardType = [
             'https://i.pinimg.com/236x/08/44/c5/0844c5eb33e92d674e6ad124bac4903a.jpg',
         },
       },
+
+      {
+        postedBy: {
+          _id: '3',
+          userName: 'Thanh',
+          image:
+            'https://i.pinimg.com/236x/08/44/c5/0844c5eb33e92d674e6ad124bac4903a.jpg',
+        },
+      },
     ],
+    caption: {
+      text: 'this is caption of video',
+    },
     comments: [
       {
         comment: ' funny video!!!',

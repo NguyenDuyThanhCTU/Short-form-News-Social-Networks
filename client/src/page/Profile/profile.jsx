@@ -1,18 +1,20 @@
+import {useSelector} from 'react-redux'
 import {ProfileType} from '../../assets/utils/ProfileType'
 
-function profile() {
+function Profile() {
+  const user = useSelector((state) => state.Auth.login.currentUser)
   return (
     <div class="bg-white rounded-lg shadow-lg px-8  h-screen  py-6 ml-64 ">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center">
           <img
-            src={ProfileType[0].avatar}
+            src={user.avatar}
             alt="Profile Picture"
             class="w-20 h-20 rounded-full mr-4"
           />
           <div>
-            <h2 class="text-xl font-semibold">{ProfileType[0].name}</h2>
-            <p class="text-gray-600">{ProfileType[0].username}</p>
+            <h2 class="text-xl font-semibold">{user.name}</h2>
+            <p class="text-gray-600">@{user.username}</p>
           </div>
         </div>
         <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full">
@@ -84,4 +86,4 @@ function profile() {
   )
 }
 
-export default profile
+export default Profile

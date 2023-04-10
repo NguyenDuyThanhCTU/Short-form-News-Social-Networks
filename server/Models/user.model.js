@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
+const avt =
+  'https://images.squarespace-cdn.com/content/v1/54b7b93ce4b0a3e130d5d232/1519987020970-8IQ7F6Z61LLBCX85A65S/icon.png?format=1000w'
+
 const UserSchema = new Schema({
   username: {
     type: String,
@@ -24,6 +27,7 @@ const UserSchema = new Schema({
   },
   avatar: {
     type: String,
+    default: avt,
   },
   bio: {
     type: String,
@@ -35,7 +39,6 @@ const UserSchema = new Schema({
   role: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Role',
-    default: null,
   },
   following: [
     {
@@ -58,10 +61,10 @@ const UserSchema = new Schema({
       ref: 'Block',
     },
   ],
-  video: [
+  news: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Video',
+      ref: 'News',
     },
   ],
 })

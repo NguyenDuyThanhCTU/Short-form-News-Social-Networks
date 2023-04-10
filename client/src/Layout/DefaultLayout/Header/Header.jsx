@@ -20,7 +20,7 @@ import Input from '../../../component/Input/Input'
 
 function Header() {
   const user = useSelector((state) => state.Auth.login.currentUser)
-  // const user = 'thanh'
+
   const [searchResult, setSearchResult] = useState('')
 
   return (
@@ -88,7 +88,7 @@ function Header() {
                     <div>
                       <img
                         className=" h-9 min-w-[2.25rem] rounded-3xl"
-                        src={avt}
+                        src={user.avatar}
                         alt="avt"
                       />
                     </div>

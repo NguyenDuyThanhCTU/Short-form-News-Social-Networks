@@ -16,7 +16,7 @@ contentController.AddTopic = async (req, res) => {
 
 contentController.GetTopic = async (req, res) => {
   try {
-    const TopicData = await Topic.find({}, 'name icon -_id')
+    const TopicData = await Topic.find({})
     const data = TopicData.map((TopicData) => TopicData.toObject())
     res.status(200).json(data)
   } catch (error) {

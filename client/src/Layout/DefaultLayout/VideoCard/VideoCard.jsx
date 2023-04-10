@@ -4,7 +4,9 @@ import {VideoCardType} from '../../../assets/utils/VideoCardType'
 import {GoVerified} from 'react-icons/go'
 import {HiVolumeUp, HiVolumeOff} from 'react-icons/hi'
 import {BsFillPlayFill, BsFillPauseFill} from 'react-icons/bs'
+
 function VideoCard() {
+  
   const [isHover, setHover] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [playing, setPlaying] = useState(false)
@@ -53,14 +55,13 @@ function VideoCard() {
           </div>
         </div>
       </div>
-
       <div className="lg:ml-20 flex gap-4 relative">
         <div
           onMouseEnter={() => setHover(true)}
           onMouseLeave={() => setHover(false)}
           className="rounded-3xl "
         >
-          <Link to="/">
+          <Link to={`/news/${VideoCardType[0].video._id}`}>
             <video
               ref={videoRef}
               loop
