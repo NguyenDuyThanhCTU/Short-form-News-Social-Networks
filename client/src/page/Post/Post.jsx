@@ -5,9 +5,10 @@ import {useDispatch, useSelector} from 'react-redux'
 import {NewsPost} from '../../redux/NewsSlice'
 import {PostNews} from '../../redux/apiRequest'
 import {useNavigate} from 'react-router-dom'
-import s3 from '../../config/aws.config'
+// import s3 from '../../config/aws.config'
+import HandleUpload from '../../config/aws.config'
 
-function Post() {
+function Post(isImage) {
   const [isLoading, setIsLoading] = useState(false)
   const [videoAsset, setvideoAsset] = useState(false)
   const [isVideo, setIsVideo] = useState(null)
@@ -17,6 +18,7 @@ function Post() {
   const [Caption, setCaption] = useState('')
   const [Topic, setTopic] = useState([])
   const [isSubmit, setIsSubmit] = useState(false)
+  const [isFinish, setIsFinish] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -40,6 +42,11 @@ function Post() {
   function handleDiscard() {
     setCaption('')
     setIsSubmit(false)
+    setIsFinish(false)
+  }
+  function handleContinue() {
+    PostNews(res, dispatch, navigate)
+    setIsFinish(true)
   }
 
   function handlePost() {
@@ -54,37 +61,38 @@ function Post() {
     setIsSubmit(true)
   }
 
-  function handleFinish() {
-    PostNews(res, dispatch, navigate)
-    setTimeout(() => {
-      const filetype = isVideo.type
+  const handleFinish = async () => {
+    const bucketName = 'shortnews2'
+    const objectKeyVideo = `video_${idUser}/${idVideo}`
+    const objectKeyimg = `img_${idUser}/${idVideo}`
 
-      const bucketName = 'shortnews1'
+    const filetype = isVideo.type
+    const imagetype = isImage.image.type
 
-      const objectKey = `${idUser}/${idVideo}`
-      // const objectKey = 'video/test'
-      console.log(objectKey)
-      s3.upload(
-        {
-          Bucket: bucketName,
-          Key: objectKey,
-          Body: isVideo,
-          ACL: 'public-read',
-          ContentType: filetype,
-        },
-        (err, data) => {
-          if (err) {
-            console.error(err)
-            // res.status(500).send(err)
-          } else {
-            console.log(
-              `Video uploaded successfully. File location: ${data.Location}`
-            )
-            // res.status(200).send('Video uploaded successfully')
-          }
-        }
-      ) 
-    }, 5000)
+    // const objectKey = 'video.mp4'
+    // console.log(objectKey)
+    await HandleUpload(bucketName, objectKeyVideo, isVideo, filetype)
+    await HandleUpload(bucketName, objectKeyimg, isImage.image, imagetype)
+    navigate('/')
+    // s3.upload(
+    //   {
+    //     Bucket: bucketName,
+    //     Key: objectKey,
+    //     Body: isVideo,
+    //     ACL: 'public-read',
+    //     ContentType: filetype,
+    //   },
+    //   (err, data) => {
+    //     if (err) {
+    //       console.error(err)
+    //     } else {
+    //       console.log(
+    //         `Video uploaded successfully. File location: ${data.Location}`
+    //       )
+    //       navigate('/')
+    //     }
+    //   }
+    // )
   }
   console.log(idVideo)
   useEffect(() => {
@@ -202,14 +210,25 @@ function Post() {
                 Discard
               </button>
               {isSubmit ? (
-                <button
-                  //disabled={videoAsset?.url ? false : true}
-                  onClick={handleFinish}
-                  type="button"
-                  className="bg-[#df6cad] hover:bg-red-500 focus:outline-none focus:shadow-outline text-white text-md font-medium p-2 rounded w-28 lg:w-44 outline-none"
-                >
-                  Finish
-                </button>
+                isFinish ? (
+                  <button
+                    //disabled={videoAsset?.url ? false : true}
+                    onClick={() => handleFinish()}
+                    type="button"
+                    className="bg-[#df6cad] hover:bg-red-500 focus:outline-none focus:shadow-outline text-white text-md font-medium p-2 rounded w-28 lg:w-44 outline-none"
+                  >
+                    Finish
+                  </button>
+                ) : (
+                  <button
+                    //disabled={videoAsset?.url ? false : true}
+                    onClick={handleContinue}
+                    type="button"
+                    className="bg-[#df6cad] hover:bg-red-300 focus:outline-none focus:shadow-outline text-white text-md font-medium p-2 rounded w-28 lg:w-44 outline-none"
+                  >
+                    Continue
+                  </button>
+                )
               ) : (
                 <button
                   //disabled={videoAsset?.url ? false : true}

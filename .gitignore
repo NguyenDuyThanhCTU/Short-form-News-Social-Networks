@@ -9,3 +9,4 @@ client/package.json
 client/src
 
 
+src/config/aws.config.js

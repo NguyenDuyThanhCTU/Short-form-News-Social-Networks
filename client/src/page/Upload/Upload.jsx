@@ -11,7 +11,6 @@ import Post from '../Post/Post'
 import {TbPlayerTrackNext} from 'react-icons/tb'
 
 function Upload() {
-  let imgURL = ''
   const [title, setTitle] = useState('')
   const [introduction, setIntroduction] = useState('')
   const [body, setBody] = useState('')
@@ -20,7 +19,7 @@ function Upload() {
   const [errorUp, setErrorUp] = useState(false)
   const [option, setOption] = useState(0)
   const [isContinue, setIsContinue] = useState(true)
-
+  const [isImage, setIsImage] = useState(null)
   const [isPreview, setIsPreview] = useState(false)
   const [isNext, setIsNext] = useState(false)
   const DataNews = useSelector((state) => state.News)
@@ -37,8 +36,7 @@ function Upload() {
 
     if (filetypes.includes(selectImage.type)) {
       setErrorUp(false)
-      imgURL = URL.createObjectURL(selectImage)
-      // setImage()
+      setIsImage(selectImage)
     } else {
       setErrorUp(true)
     }
@@ -53,7 +51,7 @@ function Upload() {
       body: body,
       hashtag: hashtag,
       conclusion: conclusion,
-      image: imgURL,
+      image: '',
       option: option,
     }
     dispatch(NewsUp(newsletter))
@@ -323,7 +321,7 @@ function Upload() {
           </div>
         </div>
       ) : (
-        <Post />
+        <Post image={isImage} />
       )}
     </div>
   )
