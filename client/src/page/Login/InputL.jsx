@@ -6,6 +6,7 @@ const InputL = (props) => {
         {name}
       </label>
       <input
+        type={id}
         className="border rounded-lg px-3 py-2 w-full"
         id={id}
         // name={id}

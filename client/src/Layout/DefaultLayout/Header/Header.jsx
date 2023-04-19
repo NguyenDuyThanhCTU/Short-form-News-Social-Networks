@@ -92,7 +92,6 @@ function Header() {
                         alt="avt"
                       />
                     </div>
-
                     <div className="hidden group-hover:block">
                       <div
                         class="bg-slate-100 shadow-md absolute top-10 right-6"
