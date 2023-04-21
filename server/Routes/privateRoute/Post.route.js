@@ -1,15 +1,16 @@
 const express = require('express')
 const PostController = require('../../Controllers/Post.controller')
-const multer = require('multer')
 
-const PostRoute = express.Router()
+const uploadPost = express.Router()
+const getAllPost = express.Router()
+const getPost = express.Router()
+const updatePost = express.Router()
+const deletePost = express.Router()
 
-// const upload = multer({dest: 'uploads/'})
+uploadPost.post('/post/upload/', PostController.newPost)
+getPost.get('/post/:id', PostController.getPost)
+getAllPost.get('/posts', PostController.getAllPost)
+updatePost.post('/post/update/:id', PostController.updatePost)
+deletePost.delete('/post/delete/:id', PostController.deletePost)
 
-PostRoute.post('/upload', PostController.newPost)
-// PostRoute.post('/upload', upload.single('file'), (req, res) => {
-//   console.log('File uploaded successfully:', req.file)
-//   res.status(200).send('File uploaded successfully!')
-// })
-
-module.exports = {PostRoute}
+module.exports = {uploadPost, getAllPost, updatePost, deletePost, getPost}

@@ -31,6 +31,7 @@ const UserSchema = new Schema({
   },
   bio: {
     type: String,
+    default: null,
   },
   timestamp_user: {
     type: Date,

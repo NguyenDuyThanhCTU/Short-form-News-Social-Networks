@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken')
-const User = require('../Models/user.model')
+const User = require('../Models/User.model')
 
-const middlewareController = {}
+const middleware = {}
 
-middlewareController.VerifyToken = async (req, res, next) => {
+middleware.Verify = async (req, res, next) => {
   const token = req.headers.token
   if (token) {
     const accessToken = token.split(' ')[1]
@@ -18,12 +18,12 @@ middlewareController.VerifyToken = async (req, res, next) => {
       })
     }
   } else {
-    return res.status(401).json({success: false, message: 'ban khong co token'})
+    return res.status(401).json({success: false, message: 'ban chua dang nhap'})
   }
 }
 
-middlewareController.VerifyContentCreatorToken = (req, res, next) => {
-  middlewareController.VerifyToken(req, res, () => {
+middleware.VerifyContentCreator = (req, res, next) => {
+  middleware.Verify(req, res, () => {
     if (req.user.contentCreator) next()
     else
       return res.status(403).json({
@@ -33,8 +33,8 @@ middlewareController.VerifyContentCreatorToken = (req, res, next) => {
   })
 }
 
-middlewareController.VerifyRole = (req, res, next) => {
-  middlewareController.VerifyToken(req, res, () => {
+middleware.VerifyAdmin = (req, res, next) => {
+  middleware.Verify(req, res, () => {
     const id = req.user.id
 
     User.findById(id)
@@ -53,4 +53,4 @@ middlewareController.VerifyRole = (req, res, next) => {
   })
 }
 
-module.exports = middlewareController
+module.exports = middleware

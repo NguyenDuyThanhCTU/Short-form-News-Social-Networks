@@ -101,7 +101,7 @@ function Header() {
 
                         {/* <!-- Profile --> */}
                         <Button
-                          to="/profile"
+                          to={`/profile/${user._id}`}
                           style="select-none flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-300 hover:text-gray-900 w-full"
                         >
                           <CgProfile className="text-2xl mr-1" />

@@ -1,22 +1,30 @@
 import {useSelector} from 'react-redux'
 import {ProfileType} from '../../assets/utils/ProfileType'
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {FiEdit} from 'react-icons/fi'
 import {VscChromeClose} from 'react-icons/vsc'
 import HandleUpload from '../../config/aws.config'
+import axios from 'axios'
+import {Navigate} from 'react-router-dom'
+import {FaSpinner} from 'react-icons/fa'
 
 function Profile({setEdit}) {
   const idUser = useSelector((state) => state.Auth.login.currentUser._id)
+  const Token = useSelector((state) => state.Auth.login.currentUser.accessToken)
+
   const DefaultStyle =
     'bg-white rounded-lg shadow-lg px-8  h-screen  py-6 ml-64 relative'
   const EditStyle =
     'bg-white rounded-lg shadow-lg w-full h-full  h-screen   relative'
   const EditStyle1 = 'px-8 py-6'
-  const user = useSelector((state) => state.Auth.login.currentUser)
   const [isEdit, setIsEdit] = useState(false)
-  const [EditName, setEditName] = useState(false)
+  const [Data, setData] = useState(null)
+  const [Name, setName] = useState('')
+  const [Bio, setBio] = useState('')
   const [ImageAsset, setImageAsset] = useState(null)
   const [isImage, setIsImage] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isUpdating, setIsUpdating] = useState(true)
 
   const handleUploadAvt = (e) => {
     const selectImg = e.target.files[0]
@@ -36,30 +44,88 @@ function Profile({setEdit}) {
   function handleExit() {
     setEdit(true)
     setIsEdit(false)
-    setEditName(false)
   }
 
-  function handleSave() {
-    const bucketName = 'avatar-sn'
-    const objectKeyVideo = `avatar_${idUser}`
-    const filetype = isImage.type
-    const finalData = HandleUpload(
-      bucketName,
-      objectKeyVideo,
-      isImage,
-      filetype
+  async function handleSave() {
+    setIsUpdating(false)
+    try {
+      const bucketName = 'avatar-sn'
+      const objectKeyVideo = `avatar_${idUser}`
+      const filetype = isImage.type
+      const finalData = await HandleUpload(
+        bucketName,
+        objectKeyVideo,
+        isImage,
+        filetype
+      )
+
+      const dataUpdatePost = {
+        name: Name,
+        avatar: finalData,
+        bio: Bio,
+      }
+
+      const res = await axios.post(
+        `http://localhost:8080/profile/update/${idUser}`,
+        dataUpdatePost,
+        {
+          headers: {
+            token: `Bearer ${Token}`,
+          },
+        }
+      )
+    } catch (error) {
+      console.error(error)
+    }
+    setIsUpdating(true)
+    handleExit()
+  }
+
+  useEffect(() => {
+    async function fetchProfile() {
+      const res = await axios.get(`http://localhost:8080/profile/${idUser}`, {
+        headers: {
+          token: `Bearer ${Token}`,
+        },
+      })
+      setData(res.data)
+      setIsLoading(false)
+    }
+    fetchProfile()
+  }, [])
+
+  if (isLoading) {
+    return (
+      <div class="flex items-center justify-center h-screen">
+        <div class="spinner-grow text-primary h-12 w-12 mr-3" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <div class="text-xl font-bold text-primary">Loading...</div>
+      </div>
     )
-    console.log(finalData)
-    // setTimeout(() => {
-
-    // }, 5000)
   }
 
+  console.log(Data.news)
   return (
     <div class={isEdit ? EditStyle : DefaultStyle}>
       {isEdit && (
         <div className="absolute bg-slate-400 bg-opacity-70 w-full h-full flex justify-center items-center z-[1]">
           <div className=" w-[40%] h-[80%] bg-white rounded-xl">
+            {!isUpdating && (
+              <>
+                <div class="fixed top-0 left-0 right-0 bottom-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
+                  <div className="fixed top-0 left-0 w-screen h-screen bg-gray-500 bg-opacity-75 flex justify-center items-center">
+                    <div className="text-xl font-bold text-primary flex flex-col items-center">
+                      <FaSpinner className="animate-spin text-2xl text-black " />
+                      <div className="text-xl font-bold text-white animate-pulse pt-1">
+                        Loading...
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
             <div className="px-6 pt-6 pb-3 flex justify-between font-sans font-semibold text-[24px] border-b-[0.5px] border-solid border-[rgba(22,24,35,.2)]">
               Edit Profile
               <button onClick={() => handleExit()}>
@@ -75,7 +141,7 @@ function Profile({setEdit}) {
                 <div className="group flex justify-center">
                   <div>
                     <img
-                      src={isImage ? ImageAsset : user.avatar}
+                      src={isImage ? ImageAsset : Data.avatar}
                       alt="Profile Picture"
                       class="w-20 h-20 rounded-full "
                     />
@@ -103,22 +169,10 @@ function Profile({setEdit}) {
                 Name
               </label>
 
-              <div className="relative left-[280px] inline-block font-semibold">
-                {' '}
-                {user.name}{' '}
-                {!EditName && (
-                  <button
-                    onClick={() => setEditName(true)}
-                    className="inline-block ml-1 hover:text-red-500 "
-                  >
-                    <FiEdit />
-                  </button>
-                )}
-              </div>
-
-              {EditName && (
-                <input className=" relative block  mt-2 border-[0.5px] border-solid border-[rgba(104,111,145,0.2)] left-[200px] w-[360px] rounded-[4px] bg-[rgba(22,24,35,0.06)] font-[16px] text-[rgb(22,24,35)] leading-[24px] outline-none p-3 resize-none" />
-              )}
+              <input
+                onChange={(e) => setName(e.target.value)}
+                className=" relative block  mt-2 border-[0.5px] border-solid border-[rgba(104,111,145,0.2)] left-[200px] w-[360px] rounded-[4px] bg-[rgba(22,24,35,0.06)] font-[16px] text-[rgb(22,24,35)] leading-[24px] outline-none p-3 resize-none"
+              />
             </div>
 
             {/* Bio */}
@@ -127,7 +181,11 @@ function Profile({setEdit}) {
                 Bio:
               </h3>
               {/* <div className="ml-2 bg-slate-300 flex  h-[200px] rounded-md w-full"> */}
-              <textarea className="  relative mb-[37px] border-[0.5px] border-solid border-[rgba(104,111,145,0.2)] left-[160px] w-[460px] rounded-[4px] bg-[rgba(22,24,35,0.06)] font-[16px] text-[rgb(22,24,35)] leading-[24px] outline-none h-[100px]  resize-none" />
+              <textarea
+                onChange={(e) => setBio(e.target.value)}
+                className="  relative mb-[37px] border-[0.5px] border-solid border-[rgba(104,111,145,0.2)] left-[160px] w-[460px] rounded-[4px] bg-[rgba(22,24,35,0.06)] font-[16px] text-[rgb(22,24,35)] leading-[24px] outline-none h-[100px]  resize-none"
+              />
+
               {/* </div> */}
             </div>
 
@@ -148,13 +206,13 @@ function Profile({setEdit}) {
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center">
             <img
-              src={user.avatar}
+              src={Data.avatar}
               alt="Profile Picture"
               class="w-20 h-20 rounded-full mr-4"
             />
             <div>
-              <h2 class="text-xl font-semibold">{user.name}</h2>
-              <p class="text-gray-600">@{user.username}</p>
+              <h2 class="text-xl font-semibold">{Data.name}</h2>
+              <p class="text-gray-600">@{Data.username}</p>
             </div>
           </div>
           <button
@@ -183,7 +241,7 @@ function Profile({setEdit}) {
         </div> */}
           <div class="w-2/3">
             <h3 class="text-lg font-semibold mb-2">About Me</h3>
-            <p class="text-gray-600">{ProfileType[0].bio}</p>
+            <p class="text-gray-600">{Data.bio}</p>
           </div>
         </div>
         <hr class="my-6" />
@@ -195,34 +253,14 @@ function Profile({setEdit}) {
         </div>
         <div class="grid grid-cols-3 gap-4">
           <div class="relative">
-            <img
-              src="https://via.placeholder.com/300x400"
-              alt="Video Thumbnail"
-              class="w-full rounded-lg"
-            />
-            <span class="absolute top-0 right-0 bg-black text-white p-1 rounded-br-lg">
-              0:30
-            </span>
-          </div>
-          <div class="relative">
-            <img
-              src="https://via.placeholder.com/300x400"
-              alt="Video Thumbnail"
-              class="w-full rounded-lg"
-            />
-            <span class="absolute top-0 right-0 bg-black text-white p-1 rounded-br-lg">
-              0:45
-            </span>
-          </div>
-          <div class="relative">
-            <img
-              src="https://via.placeholder.com/300x400"
-              alt="Video Thumbnail"
-              class="w-full rounded-lg"
-            />
-            <span class="absolute top-0 right-0 bg-black text-white p-1 rounded-br-lg">
-              1:00
-            </span>
+            {/* {Data.news.map((video) => (
+              <video
+                key={video._id}
+                ref={video.url}
+                loop
+                className="w-full rounded-lg"
+              ></video>
+            ))} */}
           </div>
         </div>
       </div>

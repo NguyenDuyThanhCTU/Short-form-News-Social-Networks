@@ -1,20 +1,27 @@
 const express = require('express')
-const authController = require('../../Controllers/auth.controller')
-
+const AuthController = require('../../Controllers/Auth.controller')
+const middleware = require('../../Controllers/middleware')
 const loginRoute = express.Router()
+const logoutRoute = express.Router()
 const signupRoute = express.Router()
-const forgotpasswordRoute = express.Router()
+const recoveryRoute = express.Router()
+
 const refreshToken = express.Router()
 
-loginRoute.post('/login', authController.loginController)
+loginRoute.post('/login', AuthController.loginController)
 
-signupRoute.post('/signup', authController.signupController)
+logoutRoute.post('/logout', middleware.Verify, AuthController.logoutController)
 
-forgotpasswordRoute.post(
-  '/forgotpassword',
-  authController.forgotPasswordController
-)
+signupRoute.post('/signup', AuthController.signupController)
 
-refreshToken.post('/refreshtoken', authController.RefreshToken)
+recoveryRoute.post('/lostpassword', AuthController.recoveryController)
 
-module.exports = {signupRoute, loginRoute, forgotpasswordRoute, refreshToken}
+refreshToken.post('/refreshtoken', AuthController.RefreshToken)
+
+module.exports = {
+  signupRoute,
+  loginRoute,
+  logoutRoute,
+  recoveryRoute,
+  refreshToken,
+}

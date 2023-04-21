@@ -10,17 +10,18 @@ import ProfileLayout from '../Layout/ProfileLayout'
 import OnlyHeader from '../Layout/OnlyHeader'
 import Detail from '../page/Detail/Detail'
 import OnlyOneLayout from '../Layout/OnlyOneLayout/index'
+import Empty from '../page/Empty/Empty'
 
 const PublicRoutes = [
-  {path: '/', component: VideoCard},
+  {path: '/', component: Empty},
   {path: '/login', component: Login},
   {path: '/register', component: Register},
   {path: '/following', component: Following},
   {path: '/setting', component: Setting, Layout: null},
   {path: '/dashboard', component: Dashboard, Layout: ProfileLayout},
-  {path: '/profile', component: Profile, Layout: ProfileLayout},
+  {path: '/profile/:id', component: Profile, Layout: ProfileLayout},
   {path: '/upload', component: Upload, Layout: OnlyHeader},
-  {path: '/news/:id', component: Detail, Layout: OnlyOneLayout},
+  {path: '/post/:id', component: Detail, Layout: OnlyOneLayout},
 ]
 
 const PrivateRoutes = []

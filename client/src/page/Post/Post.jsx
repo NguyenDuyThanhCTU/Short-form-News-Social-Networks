@@ -5,7 +5,6 @@ import {useDispatch, useSelector} from 'react-redux'
 import {NewsPost} from '../../redux/NewsSlice'
 import {PostNews} from '../../redux/apiRequest'
 import {useNavigate} from 'react-router-dom'
-// import s3 from '../../config/aws.config'
 import HandleUpload from '../../config/aws.config'
 
 function Post(isImage) {
@@ -24,7 +23,7 @@ function Post(isImage) {
 
   const res = useSelector((state) => state.News.PostDataReq)
   const idUser = useSelector((state) => state.Auth.login.currentUser._id)
-  const idVideo = useSelector((state) => state.News.PostDataRes.currentPost)
+  const postId = useSelector((state) => state.News.PostDataRes.currentPost)
   const uploadVideo = async (e) => {
     const SelectedFile = e.target.files[0]
     const filetypes = ['video/mp4', 'video/webm', 'video/ogg']
@@ -61,40 +60,42 @@ function Post(isImage) {
     setIsSubmit(true)
   }
 
-  const handleFinish = async () => {
-    const bucketName = 'shortnews2'
-    const objectKeyVideo = `video_${idUser}/${idVideo}`
-    const objectKeyimg = `img_${idUser}/${idVideo}`
+  async function handleFinish() {
+    const bucketVideo = 'video-sn'
+    const bucketImage = 'image-sn'
+    const objectKeyVideo = `video_${idUser}/${postId}`
+    const objectKeyimg = `img_${idUser}/${postId}`
+    const typeVideo = isVideo.type
+    const typeImage = isImage.image.type
+    try {
+      const Video = await HandleUpload(
+        bucketVideo,
+        objectKeyVideo,
+        isVideo,
+        typeVideo
+      )
+      const Image = await HandleUpload(
+        bucketImage,
+        objectKeyimg,
+        isImage.image,
+        typeImage
+      )
 
-    const filetype = isVideo.type
-    const imagetype = isImage.image.type
-
-    // const objectKey = 'video.mp4'
-    // console.log(objectKey)
-    await HandleUpload(bucketName, objectKeyVideo, isVideo, filetype)
-    await HandleUpload(bucketName, objectKeyimg, isImage.image, imagetype)
-    navigate('/')
-    // s3.upload(
-    //   {
-    //     Bucket: bucketName,
-    //     Key: objectKey,
-    //     Body: isVideo,
-    //     ACL: 'public-read',
-    //     ContentType: filetype,
-    //   },
-    //   (err, data) => {
-    //     if (err) {
-    //       console.error(err)
-    //     } else {
-    //       console.log(
-    //         `Video uploaded successfully. File location: ${data.Location}`
-    //       )
-    //       navigate('/')
-    //     }
-    //   }
-    // )
+      const ReupNews = {
+        url: Video,
+        image: Image,
+      }
+      const res = await axios.post(
+        `http://localhost:8080/video/update/${postId}`,
+        ReupNews
+      )
+      console.log(res.data)
+    } catch (error) {
+      console.error(error)
+    }
   }
-  console.log(idVideo)
+
+  console.log(postId)
   useEffect(() => {
     axios
       .get('http://localhost:8080/alltopic')
@@ -104,10 +105,10 @@ function Post(isImage) {
       .catch((err) => console.log(err))
   }, [])
 
-  // if (idVideo) {
+  // if (postId) {
 
   // }
-  // console.log(idVideo)
+  // console.log(postId)
   return (
     <div className="flex w-full h-full absolute left-0 top-[60px] lg:top-[70px] mb-10 pt-10 lg:pt-20 bg-[#F8F8F8] justify-center ">
       {isContinue ? (

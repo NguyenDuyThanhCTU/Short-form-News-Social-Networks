@@ -5,8 +5,7 @@ import {GoVerified} from 'react-icons/go'
 import {HiVolumeUp, HiVolumeOff} from 'react-icons/hi'
 import {BsFillPlayFill, BsFillPauseFill} from 'react-icons/bs'
 
-function VideoCard() {
-  
+function VideoCard({video}) {
   const [isHover, setHover] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [playing, setPlaying] = useState(false)
@@ -33,7 +32,7 @@ function VideoCard() {
                   width={62}
                   height={62}
                   className="rounded-full"
-                  src={VideoCardType[0].postedBy.image}
+                  src={video.user.avatar}
                   alt="profile Photo"
                   layout="reponsive"
                 />
@@ -44,11 +43,11 @@ function VideoCard() {
             <Link to="/">
               <div className=" flex items-center gap-2">
                 <p className="flex gap-2 items-center md:text-sm font-bold text-primary">
-                  {VideoCardType[0].postedBy.name}{' '}
+                  {video.user.name.replace(/\s+/g, '')}
                   <GoVerified className="text-blue-400 text-sm" />
                 </p>
                 <p className="capitalize font-medium text-xs text-gray-500 hidden md:block">
-                  @{VideoCardType[0].postedBy.userName}
+                  @{video.user.username}
                 </p>
               </div>
             </Link>
@@ -61,12 +60,12 @@ function VideoCard() {
           onMouseLeave={() => setHover(false)}
           className="rounded-3xl "
         >
-          <Link to={`/news/${VideoCardType[0].video._id}`}>
+          <Link to={`/post/${video._id}`}>
             <video
               ref={videoRef}
               loop
               className="lg:w[600px] h-[300px] md:h-[400px] lg:h-[530px] w-full rounded-2xl cursor-pointer bg-gray-100"
-              src={VideoCardType[0].video.asset.url}
+              src={video.url}
             ></video>
           </Link>
           {isHover && (

@@ -37,7 +37,7 @@ const PostNews = async (news, dispatch, navigate) => {
   dispatch(PostStart())
   console.log(news)
   try {
-    const res = await axios.post('http://localhost:8080/upload/', news)
+    const res = await axios.post('http://localhost:8080/video/upload', news)
     dispatch(PostSuccess(res.data))
     // navigate('/')
   } catch (err) {

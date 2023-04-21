@@ -1,9 +1,9 @@
-const user = require('../Models/user.model')
+const user = require('../Models/User.model')
 const Role = require('../Models/role.model')
 const bcrypt = require('bcrypt')
 
 const jwt = require('jsonwebtoken')
-const authController = {}
+const AuthController = {}
 
 generateAccessToken = (user) => {
   return jwt.sign(
@@ -29,10 +29,30 @@ refreshAccesToken = (user) => {
   )
 }
 
+AuthController.RefreshToken = async (req, res) => {
+  const RefreshToken = req.cookies.refreshToken
+  if (!RefreshToken)
+    return res.status(400).json({succes: false, message: 'Chua co token'})
+
+  jwt.verify(RefreshToken, process.env.RefreshKey, (err, user) => {
+    if (user) {
+      const newAccessToken = generateAccessToken(RefreshToken)
+      const newRefreshToken = refreshAccesToken(RefreshToken)
+      res.cookie('refreshToken', newRefreshToken, {
+        httpOnly: true,
+        secure: false,
+        path: '/',
+        sameSite: 'strict',
+      })
+      res.status(200).json({accessToken: newAccessToken})
+    } else res.status(400).json({succes: false, messae: 'Token khong dung'})
+  })
+}
+
 // @route POST /register
 // @desc Register user
 // @access Public
-authController.signupController = async (req, res) => {
+AuthController.signupController = async (req, res) => {
   const GuestRole = '6424372247c111f38524aabc'
   const {username, password, email} = req.body
 
@@ -68,7 +88,7 @@ authController.signupController = async (req, res) => {
 // @route POST /login
 // @desc login
 // @access Public
-authController.loginController = async (req, res) => {
+AuthController.loginController = async (req, res) => {
   const {username, password} = req.body
 
   try {
@@ -105,46 +125,31 @@ authController.loginController = async (req, res) => {
 // @route POST /forgotpassword
 // @desc forgot password
 // @access Public
-authController.forgotPasswordController = async (req, res) => {
+AuthController.recoveryController = async (req, res) => {
   const email = req.body
   const emailDB = await user.findOne(email)
   if (emailDB) return res.status(200).json(emailDB.email)
   else {
-    return res.status(400).json({succes: false, messae: 'SDT khong dung'})
+    return res.status(400).json({succes: false, messae: 'Email khong dung'})
   }
 }
 
-authController.RefreshToken = async (req, res) => {
-  const RefreshToken = req.cookies.refreshToken
-  if (!RefreshToken)
-    return res.status(400).json({succes: false, message: 'Chua co token'})
-
-  jwt.verify(RefreshToken, process.env.RefreshKey, (err, user) => {
-    if (user) {
-      const newAccessToken = generateAccessToken(RefreshToken)
-      const newRefreshToken = refreshAccesToken(RefreshToken)
-      res.cookie('refreshToken', newRefreshToken, {
-        httpOnly: true,
-        secure: false,
-        path: '/',
-        sameSite: 'strict',
-      })
-      res.status(200).json({accessToken: newAccessToken})
-    } else res.status(400).json({succes: false, messae: 'Token khong dung'})
-  })
+AuthController.logoutController = async (req, res) => {
+  res.clearCookie('refreshToken')
+  res.status(200).json('logout Success')
 }
 
-authController.topic = async (req, res) => {
-  const {name, icon} = req.body
+// AuthController.topic = async (req, res) => {
+//   const {name, icon} = req.body
 
-  try {
-    const newTopic = new Topic({name, icon})
-    await newTopic.save()
+//   try {
+//     const newTopic = new Topic({name, icon})
+//     await newTopic.save()
 
-    return res.status(200).json(newTopic)
-  } catch (error) {
-    res.status(500).json({succes: false, message: 'Loi server'})
-  }
-}
+//     return res.status(200).json(newTopic)
+//   } catch (error) {
+//     res.status(500).json({succes: false, message: 'Loi server'})
+//   }
+// }
 
-module.exports = authController
+module.exports = AuthController
