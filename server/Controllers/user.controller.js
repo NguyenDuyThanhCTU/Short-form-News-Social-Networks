@@ -23,7 +23,7 @@ userController.getProfileUser = async (req, res) => {
     const getUser = await user
       .findById(userID)
       .select('name avatar username bio')
-      .populate('news', 'url view')
+      .populate('news', 'url title view')
 
     res.status(200).json(getUser)
   } catch (error) {

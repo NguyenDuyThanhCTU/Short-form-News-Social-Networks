@@ -4,8 +4,9 @@ import {FaCloudUploadAlt} from 'react-icons/fa'
 import {useDispatch, useSelector} from 'react-redux'
 import {NewsPost} from '../../redux/NewsSlice'
 import {PostNews} from '../../redux/apiRequest'
-import {useNavigate} from 'react-router-dom'
-import HandleUpload from '../../config/aws.config'
+import {Navigate, useNavigate} from 'react-router-dom'
+import {HandleUpload} from '../../config/aws.config'
+import {FaSpinner} from 'react-icons/fa'
 
 function Post(isImage) {
   const [isLoading, setIsLoading] = useState(false)
@@ -18,6 +19,7 @@ function Post(isImage) {
   const [Topic, setTopic] = useState([])
   const [isSubmit, setIsSubmit] = useState(false)
   const [isFinish, setIsFinish] = useState(false)
+  const [Finish, setFinish] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -61,35 +63,29 @@ function Post(isImage) {
   }
 
   async function handleFinish() {
+    setFinish(true)
     const bucketVideo = 'video-sn'
     const bucketImage = 'image-sn'
     const objectKeyVideo = `video_${idUser}/${postId}`
     const objectKeyimg = `img_${idUser}/${postId}`
     const typeVideo = isVideo.type
     const typeImage = isImage.image.type
+
     try {
-      const Video = await HandleUpload(
-        bucketVideo,
-        objectKeyVideo,
-        isVideo,
-        typeVideo
-      )
-      const Image = await HandleUpload(
-        bucketImage,
-        objectKeyimg,
-        isImage.image,
-        typeImage
-      )
+      const [Video, Image] = await Promise.all([
+        HandleUpload(bucketVideo, objectKeyVideo, isVideo, typeVideo),
+        HandleUpload(bucketImage, objectKeyimg, isImage.image, typeImage),
+      ])
 
       const ReupNews = {
         url: Video,
         image: Image,
       }
-      const res = await axios.post(
-        `http://localhost:8080/video/update/${postId}`,
-        ReupNews
-      )
-      console.log(res.data)
+
+      await axios.post(`http://localhost:8080/video/update/${postId}`, ReupNews)
+
+      setFinish(false)
+      Navigate(`/profile/${idUser}`)
     } catch (error) {
       console.error(error)
     }
@@ -105,10 +101,22 @@ function Post(isImage) {
       .catch((err) => console.log(err))
   }, [])
 
-  // if (postId) {
-
-  // }
-  // console.log(postId)
+  if (Finish) {
+    return (
+      <>
+        <div class="fixed top-0 left-0 right-0 bottom-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
+          <div className="fixed top-0 left-0 w-screen h-screen bg-gray-500 bg-opacity-75 flex justify-center items-center">
+            <div className="text-xl font-bold text-primary flex flex-col items-center">
+              <FaSpinner className="animate-spin text-2xl text-black " />
+              <div className="text-xl font-bold text-white animate-pulse pt-1">
+                Loading...
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    )
+  }
   return (
     <div className="flex w-full h-full absolute left-0 top-[60px] lg:top-[70px] mb-10 pt-10 lg:pt-20 bg-[#F8F8F8] justify-center ">
       {isContinue ? (

@@ -1,5 +1,5 @@
 const InputR = (props) => {
-  const {id, name, getdata, getvalue, error} = props
+  const {id, name, getdata, getvalue, error, type} = props
 
   return (
     <div className="mb-4">
@@ -9,6 +9,7 @@ const InputR = (props) => {
       <div className="mt-1">
         <input
           id={id}
+          type={type}
           name={id}
           onChange={getdata}
           value={getvalue}

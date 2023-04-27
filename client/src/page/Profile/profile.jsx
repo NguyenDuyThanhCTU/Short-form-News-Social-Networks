@@ -1,11 +1,9 @@
 import {useSelector} from 'react-redux'
-import {ProfileType} from '../../assets/utils/ProfileType'
-import {useEffect, useState} from 'react'
-import {FiEdit} from 'react-icons/fi'
+import {useEffect, useRef, useState} from 'react'
 import {VscChromeClose} from 'react-icons/vsc'
-import HandleUpload from '../../config/aws.config'
+import {deleteFile} from '../../config/aws.config'
+import {HandleUpload} from '../../config/aws.config'
 import axios from 'axios'
-import {Navigate} from 'react-router-dom'
 import {FaSpinner} from 'react-icons/fa'
 
 function Profile({setEdit}) {
@@ -24,7 +22,8 @@ function Profile({setEdit}) {
   const [ImageAsset, setImageAsset] = useState(null)
   const [isImage, setIsImage] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [isUpdating, setIsUpdating] = useState(true)
+  const [isFlag, setIsFlag] = useState(false)
+  const videoRef = useRef(null)
 
   const handleUploadAvt = (e) => {
     const selectImg = e.target.files[0]
@@ -47,10 +46,15 @@ function Profile({setEdit}) {
   }
 
   async function handleSave() {
-    setIsUpdating(false)
+    setIsFlag(true)
+
     try {
       const bucketName = 'avatar-sn'
       const objectKeyVideo = `avatar_${idUser}`
+      deleteFile(bucketName, objectKeyVideo).then(() => {
+        console.log('File deleted successfully')
+      })
+
       const filetype = isImage.type
       const finalData = await HandleUpload(
         bucketName,
@@ -65,20 +69,23 @@ function Profile({setEdit}) {
         bio: Bio,
       }
 
-      const res = await axios.post(
-        `http://localhost:8080/profile/update/${idUser}`,
-        dataUpdatePost,
-        {
-          headers: {
-            token: `Bearer ${Token}`,
-          },
-        }
-      )
+      await axios
+        .post(
+          `http://localhost:8080/profile/update/${idUser}`,
+          dataUpdatePost,
+          {
+            headers: {
+              token: `Bearer ${Token}`,
+            },
+          }
+        )
+        .then(() => {
+          setIsFlag(false)
+          handleExit()
+        })
     } catch (error) {
       console.error(error)
     }
-    setIsUpdating(true)
-    handleExit()
   }
 
   useEffect(() => {
@@ -94,24 +101,24 @@ function Profile({setEdit}) {
     fetchProfile()
   }, [])
 
+  console.log(Data)
   if (isLoading) {
     return (
-      <div class="flex items-center justify-center h-screen">
-        <div class="spinner-grow text-primary h-12 w-12 mr-3" role="status">
-          <span class="sr-only">Loading...</span>
+      <div className="text-xl font-bold text-primary flex flex-col items-center">
+        <FaSpinner className="animate-spin text-2xl text-black " />
+        <div className="text-xl font-bold text-white animate-pulse pt-1">
+          Loading...
         </div>
-        <div class="text-xl font-bold text-primary">Loading...</div>
       </div>
     )
   }
 
-  console.log(Data.news)
   return (
     <div class={isEdit ? EditStyle : DefaultStyle}>
       {isEdit && (
         <div className="absolute bg-slate-400 bg-opacity-70 w-full h-full flex justify-center items-center z-[1]">
           <div className=" w-[40%] h-[80%] bg-white rounded-xl">
-            {!isUpdating && (
+            {isFlag && (
               <>
                 <div class="fixed top-0 left-0 right-0 bottom-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
                   <div className="fixed top-0 left-0 w-screen h-screen bg-gray-500 bg-opacity-75 flex justify-center items-center">
@@ -251,18 +258,50 @@ function Profile({setEdit}) {
             See all
           </a>
         </div>
-        <div class="grid grid-cols-3 gap-4">
-          <div class="relative">
-            {/* {Data.news.map((video) => (
+        <div class="grid grid-cols-3 gap-4 ">
+          <div className="grid grid-cols-3 gap-4">
+            
+            {Data.news.map((video) => (
+              <div class="relative group rounded-lg overflow-hidden">
+                <video
+                  key={video._id}
+                  src={video.url}
+                  class="w-full object-cover object-center"
+                  // title={video.title}
+                ></video>
+                <div class="absolute bottom-0 left-0 right-0 flex items-center justify-between px-3 py-2 bg-gray-800 bg-opacity-50 transition-opacity opacity-0 group-hover:opacity-100">
+                  <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-full overflow-hidden">
+                      <img
+                        src={Data.profile_picture}
+                        class="w-full h-full object-cover object-center"
+                        alt="Avatar"
+                      />
+                    </div>
+                    <div class="text-sm font-semibold text-white">
+                      {Data.username}
+                    </div>
+                  </div>
+                  <div class="text-sm font-semibold text-white">
+                    {video.views} views
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* <div class="grid grid-cols-3 gap-4">
+          <div class="relative ">
+            {Data.news.map((video) => (
               <video
                 key={video._id}
-                ref={video.url}
+                src={video.url}
                 loop
                 className="w-full rounded-lg"
               ></video>
-            ))} */}
+            ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )

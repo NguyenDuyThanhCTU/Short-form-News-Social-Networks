@@ -7,9 +7,6 @@ const NewsSchema = Schema({
     ref: 'User',
   },
 
-  title: {
-    type: String,
-  },
 
   introduction: {
     type: String,
@@ -31,7 +28,7 @@ const NewsSchema = Schema({
     type: String,
   },
 
-  url: {
+  video: {
     type: String,
     require: true,
   },
@@ -41,7 +38,7 @@ const NewsSchema = Schema({
     require: true,
   },
 
-  caption: {
+  title: {
     type: String,
     require: true,
   },

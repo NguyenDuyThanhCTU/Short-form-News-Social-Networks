@@ -41,6 +41,7 @@ const Register = () => {
       const user = values
       delete user.confirmPassword
       register(user, dispatch, navigate)
+      console.log(user)
     },
   })
 
@@ -85,12 +86,14 @@ const Register = () => {
               <InputR
                 id={'password'}
                 name={'Password'}
+                type={'password'}
                 getdata={Formik.handleChange}
                 getvalue={Formik.values.password}
                 error={Formik.errors.password}
               />
 
               <InputR
+                type={'password'}
                 id={'confirmPassword'}
                 name={'Confirm Password'}
                 getdata={Formik.handleChange}
