@@ -41,10 +41,10 @@ const privateRoute = (app) => {
 
   //Post
   app.use(Post.addPostRoute)
-  app.use(Post.PostsRoute)
-  app.use(Post.PostRoute)
+  // app.use(Post.PostsRoute)
+  // app.use(Post.PostRoute)
   app.use(Post.updatePostRoute)
-  app.use(Post.deletePostRoute)
+  // app.use(Post.deletePostRoute)
 
   //Warning
   app.use(Warning.addLevelRoute)

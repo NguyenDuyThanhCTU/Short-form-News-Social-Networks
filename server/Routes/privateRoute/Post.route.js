@@ -18,11 +18,11 @@ const CommentPostRoute = express.Router()
 // const LikesRoute = express.Router()
 // const ViewsRoute = express.Router()
 
-addPostRoute.post('/post/upload/', PostController.addPost)
-PostRoute.get('/post/:id', PostController.Post)
-PostsRoute.get('/posts', PostController.Posts)
-updatePostRoute.post('/post/update/:id', PostController.updatePost)
-deletePostRoute.delete('/post/delete/:id', PostController.deletePost)
+addPostRoute.post('/post/upload/', PostController.addpost)
+// PostRoute.get('/post/:id', PostController.Post)
+// PostsRoute.get('/posts', PostController.posts)
+updatePostRoute.post('/post/update/:id', PostController.updatepost)
+// deletePostRoute.delete('/post/delete/:id', PostController.deletePost)
 
 // LikePostRoute.post('/post/like/:id', PostController.likePost)
 // CommentPostRoute.post('/post/comment/:id', PostController.commentPost)
@@ -32,10 +32,10 @@ deletePostRoute.delete('/post/delete/:id', PostController.deletePost)
 
 module.exports = {
   addPostRoute,
-  PostsRoute,
-  PostRoute,
+  // PostsRoute,
+  // PostRoute,
   updatePostRoute,
-  deletePostRoute,
-  LikePostRoute,
-  CommentPostRoute,
+  // deletePostRoute,
+  // LikePostRoute,
+  // CommentPostRoute,
 }
