@@ -7,8 +7,9 @@ import axios from 'axios'
 import {FaSpinner} from 'react-icons/fa'
 
 function Profile({setEdit}) {
-  const idUser = useSelector((state) => state.Auth.login.currentUser._id)
+  const Data = useSelector((state) => state.Auth.login.currentUser.account)
   const Token = useSelector((state) => state.Auth.login.currentUser.accessToken)
+  const idProfile = Data.profile._id
 
   const DefaultStyle =
     'bg-white rounded-lg shadow-lg px-8  h-screen  py-6 ml-64 relative'
@@ -16,13 +17,16 @@ function Profile({setEdit}) {
     'bg-white rounded-lg shadow-lg w-full h-full  h-screen   relative'
   const EditStyle1 = 'px-8 py-6'
   const [isEdit, setIsEdit] = useState(false)
-  const [Data, setData] = useState(null)
+  // const [Data, setData] = useState(null)
   const [Name, setName] = useState('')
   const [Bio, setBio] = useState('')
   const [ImageAsset, setImageAsset] = useState(null)
   const [isImage, setIsImage] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isFlag, setIsFlag] = useState(false)
+  const [isFetch, setIsFetch] = useState(false)
+  const [DataFetch, setDataFetch] = useState(null)
+
   const videoRef = useRef(null)
 
   const handleUploadAvt = (e) => {
@@ -47,14 +51,12 @@ function Profile({setEdit}) {
 
   async function handleSave() {
     setIsFlag(true)
-
     try {
       const bucketName = 'avatar-sn'
-      const objectKeyVideo = `avatar_${idUser}`
+      const objectKeyVideo = `avatar_${idProfile}`
       deleteFile(bucketName, objectKeyVideo).then(() => {
         console.log('File deleted successfully')
       })
-
       const filetype = isImage.type
       const finalData = await HandleUpload(
         bucketName,
@@ -62,7 +64,6 @@ function Profile({setEdit}) {
         isImage,
         filetype
       )
-
       const dataUpdatePost = {
         name: Name,
         avatar: finalData,
@@ -70,38 +71,31 @@ function Profile({setEdit}) {
       }
 
       await axios
-        .post(
-          `http://localhost:8080/profile/update/${idUser}`,
-          dataUpdatePost,
-          {
-            headers: {
-              token: `Bearer ${Token}`,
-            },
-          }
+        .put(
+          `http://localhost:8080/profile/update/${idProfile}`,
+          dataUpdatePost
         )
         .then(() => {
           setIsFlag(false)
+          setIsFetch(true)
           handleExit()
         })
     } catch (error) {
       console.error(error)
     }
   }
-
+  console.log(DataFetch?.avatar)
   useEffect(() => {
-    async function fetchProfile() {
-      const res = await axios.get(`http://localhost:8080/profile/${idUser}`, {
-        headers: {
-          token: `Bearer ${Token}`,
-        },
-      })
-      setData(res.data)
+    const handleFetch = async () => {
+      const res = await axios.get(
+        `http://localhost:8080/profile/6453c7433d9b45ef875e2c16`
+      )
+      setDataFetch(res.data)
       setIsLoading(false)
     }
-    fetchProfile()
-  }, [])
+    handleFetch()
+  }, [isFetch])
 
-  console.log(Data)
   if (isLoading) {
     return (
       <div className="text-xl font-bold text-primary flex flex-col items-center">
@@ -148,7 +142,11 @@ function Profile({setEdit}) {
                 <div className="group flex justify-center">
                   <div>
                     <img
-                      src={isImage ? ImageAsset : Data.avatar}
+                      src={
+                        isImage
+                          ? ImageAsset
+                          : `${DataFetch?.avatar}?${Math.random()}`
+                      }
                       alt="Profile Picture"
                       class="w-20 h-20 rounded-full "
                     />
@@ -213,12 +211,12 @@ function Profile({setEdit}) {
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center">
             <img
-              src={Data.avatar}
+              src={`${DataFetch?.avatar}?${Math.random()}`}
               alt="Profile Picture"
               class="w-20 h-20 rounded-full mr-4"
             />
             <div>
-              <h2 class="text-xl font-semibold">{Data.name}</h2>
+              <h2 class="text-xl font-semibold">{DataFetch.name}</h2>
               <p class="text-gray-600">@{Data.username}</p>
             </div>
           </div>
@@ -248,7 +246,7 @@ function Profile({setEdit}) {
         </div> */}
           <div class="w-2/3">
             <h3 class="text-lg font-semibold mb-2">About Me</h3>
-            <p class="text-gray-600">{Data.bio}</p>
+            <p class="text-gray-600">{DataFetch.bio}</p>
           </div>
         </div>
         <hr class="my-6" />
@@ -259,8 +257,7 @@ function Profile({setEdit}) {
           </a>
         </div>
         <div class="grid grid-cols-3 gap-4 ">
-          <div className="grid grid-cols-3 gap-4">
-            
+          {/* <div className="grid grid-cols-3 gap-4">
             {Data.news.map((video) => (
               <div class="relative group rounded-lg overflow-hidden">
                 <video
@@ -288,7 +285,7 @@ function Profile({setEdit}) {
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
         {/* <div class="grid grid-cols-3 gap-4">
           <div class="relative ">

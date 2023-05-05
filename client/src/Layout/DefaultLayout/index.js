@@ -45,10 +45,16 @@ function DefaultLayout({children}) {
         </div>
         {children && <div>{children}</div>}
         <div className="flex flex-col gap-10 videos h-full w-2/3">
-          {posts.map((video) => (
-            <VideoCard video={video} key={video.id} />
-          ))}
-          {/* <VideoCard /> */}
+          {/* {posts ? (
+            <>
+              {' '}
+              {posts.map((video) => (
+                <VideoCard video={video} key={video.id} />
+              ))}
+            </>
+          ) : (
+            <div>video is null</div>
+          )} */}
         </div>
       </div>
     </div>

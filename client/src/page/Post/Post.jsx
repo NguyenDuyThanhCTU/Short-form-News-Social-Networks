@@ -15,7 +15,6 @@ function Post(isImage) {
   const [ErrorUpload, setErrorUpload] = useState(false)
   const [isContinue, setIsContinue] = useState(false)
   const [data, setData] = useState([])
-  const [Caption, setCaption] = useState('')
   const [Topic, setTopic] = useState([])
   const [isSubmit, setIsSubmit] = useState(false)
   const [isFinish, setIsFinish] = useState(false)
@@ -41,7 +40,6 @@ function Post(isImage) {
   }
 
   function handleDiscard() {
-    setCaption('')
     setIsSubmit(false)
     setIsFinish(false)
   }
@@ -52,7 +50,6 @@ function Post(isImage) {
 
   function handlePost() {
     const newsPost = {
-      caption: Caption,
       topic: Topic,
       user: idUser,
       video: '',
@@ -185,13 +182,6 @@ function Post(isImage) {
             )}
           </div>
           <div className="flex flex-col gap-3 pb-10">
-            <label className="text-md font-medium ">Caption</label>
-            <input
-              type="text"
-              value={Caption}
-              onChange={(e) => setCaption(e.target.value)}
-              className="rounded lg:after:w-650 outline-none text-md border-2 border-gray-200 p-2"
-            />
             <label className="text-md font-medium ">Choose a topic</label>
 
             <select

@@ -1,12 +1,22 @@
 const express = require('express')
 const roleController = require('../../Controllers/role.controller')
 
-const newRoleRoute = express.Router()
 const addRoleRoute = express.Router()
-const getRoleRoute = express.Router()
+const roleRoute = express.Router()
+const rolesRoute = express.Router()
+const updateRoleRoute = express.Router()
+const deleteRoleRoute = express.Router()
 
-newRoleRoute.post('/newrole', roleController.newRole)
-getRoleRoute.get('/getrole/:name', roleController.getRole)
-addRoleRoute.post('/addrole', roleController.addRole)
+addRoleRoute.post('/admmin/add/role', roleController.newRole)
+roleRoute.get('/admin/role/:name', roleController.getRole)
+rolesRoute.get('/admin/roles/', roleController.getRole)
+updateRoleRoute.post('/update/role', roleController.addRole)
+deleteRoleRoute.delete('/admin/delete/role/:id')
 
-module.exports = {newRoleRoute, getRoleRoute, addRoleRoute}
+module.exports = {
+  addRoleRoute,
+  roleRoute,
+  updateRoleRoute,
+  updateRoleRoute,
+  deleteRoleRoute,
+}

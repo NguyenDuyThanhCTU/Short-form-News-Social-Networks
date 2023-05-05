@@ -1,87 +1,90 @@
-const user = require('../Models/User.model')
-const Role = require('../Models/role.model')
+const {Profile, Account} = require('../Models/User.model')
+const {Role} = require('../Models/role.model')
+const {Token} = require('../Models/Token.model')
 const bcrypt = require('bcrypt')
 
 const jwt = require('jsonwebtoken')
 const AuthController = {}
 
-generateAccessToken = (user) => {
+AccessToken = (user, getRole) => {
   return jwt.sign(
     {
       id: user.id,
-      role: user.role,
+      role: getRole.role,
     },
     process.env.SecretKey,
     {
-      expiresIn: '30d',
+      expiresIn: '365d',
     }
   )
 }
-
-refreshAccesToken = (user) => {
-  return jwt.sign(
-    {
-      id: user.id,
-      role: user.role,
-    },
-    process.env.RefreshKey,
-    {expiresIn: '365d'}
-  )
+SaveToken = async (token, account) => {
+  try {
+    const newToken = new Token({
+      token: token,
+      account: account._id,
+    })
+    await newToken.save()
+    await Account.findOneAndUpdate({_id: account._id}, {token: newToken._id})
+    return newToken
+  } catch (error) {
+    console.error('Error saving token:', error)
+  }
 }
 
-AuthController.RefreshToken = async (req, res) => {
-  const RefreshToken = req.cookies.refreshToken
-  if (!RefreshToken)
-    return res.status(400).json({succes: false, message: 'Chua co token'})
-
-  jwt.verify(RefreshToken, process.env.RefreshKey, (err, user) => {
-    if (user) {
-      const newAccessToken = generateAccessToken(RefreshToken)
-      const newRefreshToken = refreshAccesToken(RefreshToken)
-      res.cookie('refreshToken', newRefreshToken, {
-        httpOnly: true,
-        secure: false,
-        path: '/',
-        sameSite: 'strict',
-      })
-      res.status(200).json({accessToken: newAccessToken})
-    } else res.status(400).json({succes: false, messae: 'Token khong dung'})
-  })
+checkUsername = async (username) => {
+  const userCheck = await Account.findOne({username})
+  if (userCheck) {
+    return true
+  } else {
+    return false
+  }
 }
 
 // @route POST /register
-// @desc Register user
+// @desc Create Account
 // @access Public
 AuthController.signupController = async (req, res) => {
-  const GuestRole = '6424372247c111f38524aabc'
   const {username, password, email} = req.body
 
   try {
-    const User = await user.findOne({username})
-    const Email = await user.findOne({email})
+    const existingAccount = await Account.findOne({username})
+    const existingProfile = await Profile.findOne({email})
 
-    if (User || Email)
-      return res.status(200).json({
-        succes: false,
-        message: 'Tai khoan hoac so dien thoai da ton tai',
+    if (existingAccount || existingProfile) {
+      return res.status(409).json({
+        success: false,
+        message: 'Username or email already exist',
       })
+    }
 
     const salt = await bcrypt.genSalt(10)
     const hashPassword = await bcrypt.hash(password, salt)
-    const newUser = new user({
+
+    const newAccount = new Account({
       username,
       password: hashPassword,
-      email,
-      role: GuestRole,
     })
-    const savedUser = await newUser.save()
 
-    const newRole = Role.findById(GuestRole)
-    await newRole.updateOne({$push: {user: savedUser._id}})
+    const newProfile = new Profile({
+      email,
+      account: newAccount._id,
+    })
 
-    return res.status(200).json(newUser)
+    newAccount.profile = newProfile._id
+
+    await newAccount.save()
+    await newProfile.save()
+
+    return res.status(200).json({
+      success: true,
+      message: 'Account created successfully',
+      account: newAccount,
+      profile: newProfile,
+    })
   } catch (error) {
-    res.status(500).json({succes: false, message: 'Loi server'})
+    console.error(error)
+    res.status(500).json({success: false, message: 'Internal Server Error'})
   }
 }
 
@@ -91,65 +94,126 @@ AuthController.signupController = async (req, res) => {
 AuthController.loginController = async (req, res) => {
   const {username, password} = req.body
 
-  try {
-    const User = await user.findOne({username})
-    const valdPassword = await bcrypt.compare(password, User.password)
+  const User = await Account.findOne({username}).populate('profile')
 
+  if (User) {
+    const valdPassword = await bcrypt.compare(password, User.password)
     if (valdPassword) {
-      const accessToken = generateAccessToken(User)
-      const refreshToken = refreshAccesToken(User)
-      res.cookie('refreshToken', refreshToken, {
+      const getRole = await Profile.findById(User.profile)
+
+      const accessToken = AccessToken(User, getRole)
+
+      res.cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: false,
         path: '/',
         sameSite: 'strict',
       })
-      if (User.username === 'Admin') {
-        const {password, following, follower, block, news, ...others} =
-          User._doc
-        res.status(200).json({...others, accessToken, refreshToken})
-      } else {
-        const {password, ...others} = User._doc
-        res.status(200).json({...others, accessToken, refreshToken})
-      }
-    } else
-      return res.status(401).json({
+
+      SaveToken(accessToken, User)
+        .then((token) => {
+          const {password, ...others} = User._doc
+          res.status(200).json({account: {...others}, token: token._id})
+        })
+        .catch((error) =>
+          res
+            .status(500)
+            .json({succes: false, message: 'Internal Server Error'})
+        )
+    } else {
+      res.status(409).json({
         succes: false,
-        messae: 'tai khoan hoac mat khau khong chinh xac',
+        messae: 'Username or password incorrect',
       })
-  } catch (error) {
-    res.status(500).json({succes: false, message: 'Loi server'})
+    }
+  } else {
+    res.status(409).json({
+      succes: false,
+      messae: 'Username or password incorrect',
+    })
   }
 }
 
-// @route POST /forgotpassword
-// @desc forgot password
+AuthController.account = async (req, res) => {
+  const {username} = req.body
+
+  try {
+    const existingAccount = await Account.findOne({username})
+    if (existingAccount) {
+      res.status(200).json({
+        succes: true,
+        username: existingAccount,
+      })
+    } else {
+      res.status(409).json({
+        succes: false,
+        messae: 'Username incorrect',
+      })
+    }
+  } catch (error) {
+    res.status(500).json({succes: false, message: 'Internal Server Error'})
+  }
+}
+// @route POST /lostpassword
+// @desc GET Account(password)
 // @access Public
 AuthController.recoveryController = async (req, res) => {
-  const email = req.body
-  const emailDB = await user.findOne(email)
-  if (emailDB) return res.status(200).json(emailDB.email)
-  else {
-    return res.status(400).json({succes: false, messae: 'Email khong dung'})
+  const {username, password} = req.body
+  const salt = await bcrypt.genSalt(10)
+  try {
+    const userCheck = checkUsername(username)
+    if (userCheck) {
+      const passwordHashed = await bcrypt.hash(password, salt)
+      await Account.findOneAndUpdate(
+        {username: username},
+        {password: passwordHashed}
+      )
+      res
+        .status(200)
+        .json({success: true, message: 'Password has been changed'})
+    } else {
+      res.status(404).json({success: false, message: 'Incorrect account'})
+    }
+  } catch (error) {
+    res.status(500).json({succes: false, message: 'Internal Server Error'})
   }
 }
 
 AuthController.logoutController = async (req, res) => {
-  res.clearCookie('refreshToken')
-  res.status(200).json('logout Success')
+  const accountID = req.params
+  try {
+    res.clearCookie('accessToken')
+    await Account.findByIdAndUpdate({_id: accountID.id}, {$set: {token: null}})
+    await Token.findOneAndDelete({account: accountID.id})
+    res.status(200).json('logout Success')
+  } catch (error) {
+    res.status(500).json({success: false, message: 'Internal Server Error'})
+  }
 }
 
-// AuthController.topic = async (req, res) => {
-//   const {name, icon} = req.body
+AuthController.accounts = async (req, res) => {
+  try {
+    const accounts = await Account.find()
+    res.status(200).json(accounts)
+  } catch (error) {
+    res.status(500).json({success: false, message: 'Internal Server Error'})
+  }
+}
 
-//   try {
-//     const newTopic = new Topic({name, icon})
-//     await newTopic.save()
+AuthController.searchAccounts = async (req, res) => {
+  const searchTerm = req.query.q
 
-//     return res.status(200).json(newTopic)
-//   } catch (error) {
-//     res.status(500).json({succes: false, message: 'Loi server'})
-//   }
-// }
+  try {
+    const accounts = await Account.find({
+      $or: [
+        {name: {$regex: searchTerm, $options: 'i'}},
+        {username: {$regex: searchTerm, $options: 'i'}},
+      ],
+    })
+    res.status(200).json(accounts)
+  } catch (error) {
+    res.status(500).json({success: false, message: 'Internal Server Error'})
+  }
+}
 
 module.exports = AuthController

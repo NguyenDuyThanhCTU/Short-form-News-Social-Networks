@@ -1,27 +1,35 @@
 const express = require('express')
 const AuthController = require('../../Controllers/Auth.controller')
-const middleware = require('../../Controllers/middleware')
+// const middleware = require('../../Controllers/middleware')
+
 const loginRoute = express.Router()
 const logoutRoute = express.Router()
 const signupRoute = express.Router()
 const recoveryRoute = express.Router()
-
-const refreshToken = express.Router()
+const accountsRoute = express.Router()
+const searchAccountRoute = express.Router()
+const accountRoute = express.Router()
 
 loginRoute.post('/login', AuthController.loginController)
 
-logoutRoute.post('/logout', middleware.Verify, AuthController.logoutController)
+logoutRoute.get('/logout/:id', AuthController.logoutController)
 
 signupRoute.post('/signup', AuthController.signupController)
 
 recoveryRoute.post('/lostpassword', AuthController.recoveryController)
 
-refreshToken.post('/refreshtoken', AuthController.RefreshToken)
+accountsRoute.get('/admin/accounts', AuthController.accounts)
+
+searchAccountRoute.get('/account/search', AuthController.searchAccounts)
+
+accountRoute.post('/account', AuthController.account)
 
 module.exports = {
   signupRoute,
   loginRoute,
   logoutRoute,
   recoveryRoute,
-  refreshToken,
+  accountsRoute,
+  searchAccountRoute,
+  accountRoute,
 }

@@ -1,4 +1,4 @@
-const user = require('../Models/User.model')
+const {Profile} = require('../Models/User.model')
 const userController = {}
 
 // @route GET /admin/show-user
@@ -6,7 +6,7 @@ const userController = {}
 // @access Only Admin
 userController.getAllUser = async (req, res) => {
   try {
-    const getUser = await user.find()
+    const getUser = await Profile.find()
 
     res.status(200).json(getUser)
   } catch (error) {
@@ -17,17 +17,17 @@ userController.getAllUser = async (req, res) => {
 // @route GET /profile/:id
 // @desc get Profile
 // @access User
-userController.getProfileUser = async (req, res) => {
+userController.profile = async (req, res) => {
   const userID = req.params.id
+
   try {
-    const getUser = await user
-      .findById(userID)
-      .select('name avatar username bio')
-      .populate('news', 'url title view')
+    const getUser = await Profile.findById(userID)
+    //   // .select('name avatar username bio')
+    //   // .populate('news', 'url title view')
 
     res.status(200).json(getUser)
   } catch (error) {
-    res.status(500).json({succes: false, message: 'Loi server'})
+    res.status(500).json({succes: false, message: 'Internal Server Error'})
   }
 }
 
@@ -51,11 +51,11 @@ userController.getDashboardUser = async (req, res) => {
 // @route POST /profile/update
 // @desc update Profile
 // @access User
-userController.updateUser = async (req, res) => {
+userController.updateProfile = async (req, res) => {
   const userID = req.params.id
   const {avatar, name, bio} = req.body
   try {
-    await user.findByIdAndUpdate(userID, {avatar, name, bio})
+    await Profile.findByIdAndUpdate(userID, {avatar, name, bio})
 
     res.status(200).json(`Update id ${userID} complete`)
   } catch (error) {

@@ -7,7 +7,7 @@ const PostController = {}
 //3. trong thông tin lưu vào news mongoDB có cả user_id
 //4. trong userSchema Sẽ tự thêm ObjectID news
 
-PostController.newPost = async (req, res) => {
+PostController.addPost = async (req, res) => {
   const {
     user,
     title,
@@ -48,10 +48,14 @@ PostController.newPost = async (req, res) => {
   }
 }
 
-PostController.getAllPost = async (req, res) => {
+PostController.Posts = async (req, res) => {
   try {
-    const post = await News.find().populate('user', 'username avatar name')
-    res.status(200).json(post)
+    const post = await News.find().populate('profile', 'username avatar name')
+    if (post) {
+      res.status(200).json(post)
+    } else {
+      res.status(409).json('Null')
+    }
   } catch (error) {
     console.log(error)
     res.status(500).json({message: 'Server error'})
@@ -76,7 +80,7 @@ PostController.updatePost = async (req, res) => {
   }
 }
 
-PostController.getPost = async (req, res) => {
+PostController.Post = async (req, res) => {
   const postId = req.params.id
   try {
     const post = await News.findById(postId).populate(

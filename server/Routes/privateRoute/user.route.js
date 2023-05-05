@@ -2,33 +2,32 @@ const express = require('express')
 const middleware = require('../../Controllers/middleware')
 const userController = require('../../Controllers/user.controller')
 
-const getAllUser = express.Router()
-const getProfileUser = express.Router()
-const updateUser = express.Router()
-const deleteUser = express.Router()
+const profilesRoute = express.Router()
+const profileRoute = express.Router()
+const updateProfileRoute = express.Router()
+const deleteProfileRoute = express.Router()
 
-getProfileUser.get(
-  '/profile/:id',
-  middleware.Verify,
-  userController.getProfileUser
-)
+const updateToContentCreatorRoute = express.Router()
 
-getAllUser.get(
-  '/admin/show-user',
-  middleware.VerifyAdmin,
-  userController.getAllUser
-)
+profileRoute.get('/profile/:id', userController.profile)
 
-updateUser.post(
+profilesRoute.get('/admin/show-user', userController.getAllUser)
+
+updateProfileRoute.put(
   '/profile/update/:id',
-  middleware.Verify,
-  userController.updateUser
+
+  userController.updateProfile
 )
 
-deleteUser.delete(
+deleteProfileRoute.delete(
   '/profile/delete/:id',
-  middleware.Verify,
+
   userController.deleteUser
 )
 
-module.exports = {getProfileUser, getAllUser, updateUser, deleteUser}
+module.exports = {
+  profilesRoute,
+  profileRoute,
+  updateProfileRoute,
+  deleteProfileRoute,
+}

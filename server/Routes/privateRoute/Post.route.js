@@ -1,16 +1,41 @@
 const express = require('express')
 const PostController = require('../../Controllers/Post.controller')
 
-const uploadPost = express.Router()
-const getAllPost = express.Router()
-const getPost = express.Router()
-const updatePost = express.Router()
-const deletePost = express.Router()
+const addPostRoute = express.Router()
+const PostsRoute = express.Router()
+const PostRoute = express.Router()
+const updatePostRoute = express.Router()
+const deletePostRoute = express.Router()
 
-uploadPost.post('/post/upload/', PostController.newPost)
-getPost.get('/post/:id', PostController.getPost)
-getAllPost.get('/posts', PostController.getAllPost)
-updatePost.post('/post/update/:id', PostController.updatePost)
-deletePost.delete('/post/delete/:id', PostController.deletePost)
+const LikePostRoute = express.Router()
+const CommentPostRoute = express.Router()
 
-module.exports = {uploadPost, getAllPost, updatePost, deletePost, getPost}
+// const ExistingViewsPostRoute = express.Router()
+// const ExistingLikePostRoute = express.Router()
+
+// const commentsRoute = express.Router()
+// const SubCommentsRoute = express.Router()
+// const LikesRoute = express.Router()
+// const ViewsRoute = express.Router()
+
+addPostRoute.post('/post/upload/', PostController.addPost)
+PostRoute.get('/post/:id', PostController.Post)
+PostsRoute.get('/posts', PostController.Posts)
+updatePostRoute.post('/post/update/:id', PostController.updatePost)
+deletePostRoute.delete('/post/delete/:id', PostController.deletePost)
+
+// LikePostRoute.post('/post/like/:id', PostController.likePost)
+// CommentPostRoute.post('/post/comment/:id', PostController.commentPost)
+
+// ExistingViewsPostRoute.post('/post/like/:id', PostController.likePost)
+// ExistingLikePostRoute.post('/post/comment/:id', PostController.commentPost)
+
+module.exports = {
+  addPostRoute,
+  PostsRoute,
+  PostRoute,
+  updatePostRoute,
+  deletePostRoute,
+  LikePostRoute,
+  CommentPostRoute,
+}

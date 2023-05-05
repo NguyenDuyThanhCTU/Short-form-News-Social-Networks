@@ -1,20 +1,17 @@
 const express = require('express')
 const contentController = require('../../Controllers/content.controller')
 
-const AddHashtagRoute = express.Router()
-const AllHashtagRoute = express.Router()
 const AddTopicRoute = express.Router()
-const AllTopicRoute = express.Router()
+const TopicsRoute = express.Router()
 
-AddHashtagRoute.post('/addhashtag', contentController.AddHashtag)
-AllHashtagRoute.get('/allhashtag', contentController.GetHashtag)
+const TopicRoute = express.Router()
+const updateTopicRoute = express.Router()
+const deleteTopicRoute = express.Router()
 
 AddTopicRoute.post('/addtopic', contentController.AddTopic)
-AllTopicRoute.get('/alltopic', contentController.GetTopic)
+TopicsRoute.get('/alltopic', contentController.GetTopic)
 
 module.exports = {
   AddTopicRoute,
-  AllTopicRoute,
-  AddHashtagRoute,
-  AllHashtagRoute,
+  TopicsRoute,
 }

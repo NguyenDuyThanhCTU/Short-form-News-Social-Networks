@@ -27,7 +27,7 @@ const FollowingSchema = mongoose.Schema({
         type: Date,
         default: Date.now(),
       },
-      followingBy: {
+      following: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
       },

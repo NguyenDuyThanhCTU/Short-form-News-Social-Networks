@@ -1,11 +1,11 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import Tippy from '@tippyjs/react/headless'
 // =====
 import Logo from '../../../assets/imgs/FullLogo-black.png'
 import avt from '../../../assets/imgs/1.jpg'
 import {BsSearch} from 'react-icons/bs'
-import {Link} from 'react-router-dom'
-import {useSelector} from 'react-redux'
+import {Link, useNavigate} from 'react-router-dom'
+import {useDispatch, useSelector} from 'react-redux'
 import {CgProfile} from 'react-icons/cg'
 import {SlSettings} from 'react-icons/sl'
 import {HiLogout} from 'react-icons/hi'
@@ -17,11 +17,32 @@ import WrapperAccount from '../../../component/Wrapper/Wrapper'
 import AccountItem from '../../../component/AccoutItem/AccountItem'
 import Button from '../../../component/Button/Button'
 import Input from '../../../component/Input/Input'
+import axios from 'axios'
+import {clearLogin} from '../../../redux/AuSlice'
 
 function Header() {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  // const [Data, setData] = useState(null)
   const user = useSelector((state) => state.Auth.login.currentUser)
 
   const [searchResult, setSearchResult] = useState('')
+
+  const Logout = async () => {
+    try {
+      const userId = user.account._id
+      await axios.get(`http://localhost:8080/logout/${userId}`)
+      dispatch(clearLogin)
+      navigate('/')
+    } catch (error) {
+      console.log(error)
+    }
+    dispatch(clearLogin())
+  }
+
+  async function handleLogout() {
+    await Logout()
+  }
 
   return (
     <header className=" h-16 flex justify-center bg-black items-center w-full fixed top-0 left-0 right-0 z-50">
@@ -88,7 +109,7 @@ function Header() {
                     <div>
                       <img
                         className=" h-9 min-w-[2.25rem] rounded-3xl"
-                        src={user.avatar}
+                        src={`${user?.account.profile.avatar}?${Math.random()}`}
                         alt="avt"
                       />
                     </div>
@@ -101,7 +122,7 @@ function Header() {
 
                         {/* <!-- Profile --> */}
                         <Button
-                          to={`/profile/${user._id}`}
+                          to={`/profile/${user.account._id}`}
                           style="select-none flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-300 hover:text-gray-900 w-full"
                         >
                           <CgProfile className="text-2xl mr-1" />
@@ -117,13 +138,14 @@ function Header() {
                         </Button>
 
                         {/* <!-- Logout  --> */}
-                        <Button
-                          to="/login"
-                          style=" select-none flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-100 hover:text-red-900"
+                        <button
+                          // to="/login"
+                          className="w-full select-none flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-100 hover:text-red-900"
+                          onClick={() => handleLogout()}
                         >
                           <HiLogout className="text-2xl mr-1" />
                           Logout
-                        </Button>
+                        </button>
                       </div>
                     </div>
                   </div>
