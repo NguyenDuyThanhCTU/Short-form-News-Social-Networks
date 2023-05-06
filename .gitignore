@@ -1,13 +1,13 @@
-server/node_modules
+
 # server/package-lock.json
 # server/package.json
 server/.env
 
-client/node_modules
-client/src/config/aws.config.js
+# client/src/config/aws.config.js
+
 # client/package-lock.json
 # client/package.json
 # client/src
 
-
+ client/.env
 # src/config/aws.config.js 
