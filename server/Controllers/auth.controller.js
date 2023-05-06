@@ -209,7 +209,7 @@ AuthController.searchAccounts = async (req, res) => {
         {name: {$regex: searchTerm, $options: 'i'}},
         {username: {$regex: searchTerm, $options: 'i'}},
       ],
-    })
+    }).populate('profile')
     res.status(200).json(accounts)
   } catch (error) {
     res.status(500).json({success: false, message: 'Internal Server Error'})

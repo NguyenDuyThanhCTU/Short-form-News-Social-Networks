@@ -10,7 +10,7 @@ userController.getAllUser = async (req, res) => {
 
     res.status(200).json(getUser)
   } catch (error) {
-    res.status(500).json({succes: false, message: 'Loi server'})
+    res.status(500).json({success: false, message: 'Internal Server Error'})
   }
 }
 
@@ -21,9 +21,12 @@ userController.profile = async (req, res) => {
   const userID = req.params.id
 
   try {
-    const getUser = await Profile.findById(userID)
+    const getUser = await Profile.findById(userID).populate(
+      'news',
+      'image view video'
+    )
     //   // .select('name avatar username bio')
-    //   // .populate('news', 'url title view')
+    //   //
 
     res.status(200).json(getUser)
   } catch (error) {
@@ -44,7 +47,7 @@ userController.getDashboardUser = async (req, res) => {
 
     res.status(200).json(getUser)
   } catch (error) {
-    res.status(500).json({succes: false, message: 'Loi server'})
+    res.status(500).json({success: false, message: 'Internal Server Error'})
   }
 }
 
@@ -59,7 +62,7 @@ userController.updateProfile = async (req, res) => {
 
     res.status(200).json(`Update id ${userID} complete`)
   } catch (error) {
-    res.status(500).json({succes: false, message: 'Loi server'})
+    res.status(500).json({success: false, message: 'Internal Server Error'})
   }
 }
 
@@ -73,7 +76,7 @@ userController.deleteUser = async (req, res) => {
 
     res.status(200).json(`delete id ${userID} success`)
   } catch (error) {
-    res.status(500).json({succes: false, message: 'Loi server'})
+    res.status(500).json({success: false, message: 'Internal Server Error'})
   }
 }
 

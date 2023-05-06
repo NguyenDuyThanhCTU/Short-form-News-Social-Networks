@@ -15,9 +15,9 @@ const NewsSchema = Schema({
 
   topic: {type: mongoose.Schema.Types.ObjectId, ref: 'Topic'},
 
-  view: [{type: mongoose.Schema.Types.ObjectId, ref: 'View'}],
-  like: [{type: mongoose.Schema.Types.ObjectId, ref: 'Like'}],
-  comment: [{type: mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
+  view: {type: mongoose.Schema.Types.ObjectId, ref: 'View'},
+  like: {type: mongoose.Schema.Types.ObjectId, ref: 'Like'},
+  comment: {type: mongoose.Schema.Types.ObjectId, ref: 'Comment'},
 })
 
 module.exports = mongoose.model('News', NewsSchema)

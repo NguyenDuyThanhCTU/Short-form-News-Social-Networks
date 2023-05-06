@@ -19,8 +19,8 @@ const CommentPostRoute = express.Router()
 // const ViewsRoute = express.Router()
 
 addPostRoute.post('/post/upload/', PostController.addpost)
-// PostRoute.get('/post/:id', PostController.Post)
-// PostsRoute.get('/posts', PostController.posts)
+PostRoute.get('/post/:id', PostController.post)
+PostsRoute.get('/posts', PostController.posts)
 updatePostRoute.post('/post/update/:id', PostController.updatepost)
 // deletePostRoute.delete('/post/delete/:id', PostController.deletePost)
 
@@ -32,8 +32,8 @@ updatePostRoute.post('/post/update/:id', PostController.updatepost)
 
 module.exports = {
   addPostRoute,
-  // PostsRoute,
-  // PostRoute,
+  PostsRoute,
+  PostRoute,
   updatePostRoute,
   // deletePostRoute,
   // LikePostRoute,

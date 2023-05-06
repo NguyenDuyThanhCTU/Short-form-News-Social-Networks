@@ -7,13 +7,10 @@ const NewsSlice = createSlice({
       title: '',
       introduction: '',
       body: '',
-      hashtag: [],
-      conclusion: [],
-      image: '',
-      video: '',
+      hashtag: '',
+      footer: '',
       option: 1,
-      caption: '',
-      user: '',
+      profile: '',
       topic: 'development',
     },
     PostDataRes: {
@@ -28,15 +25,12 @@ const NewsSlice = createSlice({
       state.PostDataReq.introduction = action.payload.introduction
       state.PostDataReq.body = action.payload.body
       state.PostDataReq.hashtag = action.payload.hashtag
-      state.PostDataReq.conclusion = action.payload.conclusion
-      state.PostDataReq.image = action.payload.image
+      state.PostDataReq.footer = action.payload.footer
       state.PostDataReq.option = action.payload.option
     },
     NewsPost: (state, action) => {
       state.PostDataReq.topic = action.payload.topic
-      state.PostDataReq.user = action.payload.user
-      state.PostDataReq.video = action.payload.video
-      state.PostDataReq.caption = action.payload.caption
+      state.PostDataReq.profile = action.payload.profile
     },
     PostStart: (state) => {
       state.PostDataRes.isFetching = true
@@ -51,5 +45,5 @@ const NewsSlice = createSlice({
 })
 
 export default NewsSlice.reducer
-export const {NewsUp, NewsPost, PostStart, PostSuccess, PostError} =
+export const {NewsUp, NewsPost, PostStart, PostSuccess, PostError, NewPreview} =
   NewsSlice.actions

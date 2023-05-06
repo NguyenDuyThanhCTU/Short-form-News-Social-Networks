@@ -22,6 +22,7 @@ function Upload() {
   const [isImage, setIsImage] = useState(null)
   const [isPreview, setIsPreview] = useState(false)
   const [isNext, setIsNext] = useState(false)
+  const [isFooter, setIsFooter] = useState('')
   const [Uncorrect, setUncorrect] = useState(true)
   const DataNews = useSelector((state) => state.News)
 
@@ -46,7 +47,7 @@ function Upload() {
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    if (!title || !introduction || !body || !hashtag || !option) {
+    if (!title || !introduction || !body || !hashtag || !option || !isFooter) {
       setUncorrect(true)
       setTimeout(() => {
         setUncorrect(false)
@@ -57,9 +58,10 @@ function Upload() {
         introduction: introduction,
         body: body,
         hashtag: hashtag,
-        image: '',
+        footer: isFooter,
         option: option,
       }
+      console.log(newsletter)
       dispatch(NewsUp(newsletter))
       setIsNext(true)
     }
@@ -68,6 +70,7 @@ function Upload() {
   function handleDiscard() {
     setTitle('')
     setIntroduction('')
+    setIsFooter('')
     setBody('')
     setHashtag('')
     setOption(0)
@@ -78,9 +81,9 @@ function Upload() {
   function handleReview() {
     setIsPreview(true)
   }
-  console.log(title)
+
   return (
-    <div className="flex w-full h-full absolute left-0 top-[60px] lg:top-[70px] mb-10 pt-10 lg:pt-10 bg-white justify-center ">
+    <div className=" flex w-full h-full absolute  left-0 top-[60px] lg:top-[70px] mb-10 pt-10 lg:pt-10 bg-white justify-center ">
       {isContinue ? (
         <>
           <div className="flex flex-wrap bg-white w-full">
@@ -166,7 +169,7 @@ function Upload() {
               </div>
             )}
 
-            <div class="h-[56rem] basis-1/3 w-full max-w-md mx-auto mt-16px p-6 rounded-lg shadow-xl  bg-white">
+            <div class=" h-[56rem] basis-1/3 w-full max-w-md mx-auto mt-16px p-6 rounded-lg shadow-xl  bg-white">
               <form onSubmit={handleSubmit}>
                 <h2 class="text-2xl font-bold text-gray-700 mb-2 text-center">
                   Upload New
@@ -228,7 +231,18 @@ function Upload() {
                       className="w-full p-2 border rounded-lg"
                     />
                   </div>
-
+                  <label class="block text-gray-700 font-bold mb-2" for="name">
+                    Footer
+                  </label>
+                  <div className="mb-4">
+                    <textarea
+                      id="footer"
+                      placeholder="Footer"
+                      value={isFooter}
+                      onChange={(e) => setIsFooter(e.target.value)}
+                      className="w-full p-2 border rounded-lg"
+                    ></textarea>
+                  </div>
                   <label className="cursor-pointer">
                     <div className="flex flex-col items-center justify-center h-full">
                       <div className="flex flex-col justify-center items-center">

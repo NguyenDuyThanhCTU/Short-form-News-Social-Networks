@@ -1,6 +1,6 @@
 const express = require('express')
 const middleware = require('../../Controllers/middleware')
-const userController = require('../../Controllers/user.controller')
+const userController = require('../../Controllers/User.controller')
 
 const profilesRoute = express.Router()
 const profileRoute = express.Router()

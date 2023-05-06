@@ -19,7 +19,7 @@ const PublicRoutes = [
   {path: '/losspassword', component: LossPass},
   {path: '/register', component: Register},
   {path: '/following', component: Following},
-  {path: '/setting', component: Setting, Layout: null},
+  {path: '/setting', component: Setting},
   {path: '/dashboard', component: Dashboard, Layout: ProfileLayout},
   {path: '/profile/:id', component: Profile, Layout: ProfileLayout},
   {path: '/upload', component: Upload, Layout: OnlyHeader},

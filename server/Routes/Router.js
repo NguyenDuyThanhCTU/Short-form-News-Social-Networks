@@ -6,7 +6,7 @@ const Lock = require('../Routes/privateRoute/Lock.route')
 const Follow = require('../Routes/privateRoute/Follow.route')
 const Block = require('../Routes/privateRoute/Block.route')
 const Topic = require('./privateRoute/Content.route')
-
+const Interaction = require('./privateRoute/Interaction.route')
 const {
   getRoleRoute,
   newRoleRoute,
@@ -41,8 +41,8 @@ const privateRoute = (app) => {
 
   //Post
   app.use(Post.addPostRoute)
-  // app.use(Post.PostsRoute)
-  // app.use(Post.PostRoute)
+  app.use(Post.PostsRoute)
+  app.use(Post.PostRoute)
   app.use(Post.updatePostRoute)
   // app.use(Post.deletePostRoute)
 
@@ -90,6 +90,13 @@ const privateRoute = (app) => {
   app.use(Block.ReasonsRoute)
   app.use(Block.updateReasonRoute)
   app.use(Block.deleteReasonRoute)
+
+  //Interaction
+  app.use(Interaction.CommentRoute)
+  app.use(Interaction.LikeRoute)
+  app.use(Interaction.ViewRoute)
+  app.use(Interaction.deleteCommentRoute)
+  app.use(Interaction.unLikeRoute)
 }
 
 module.exports = {publicRoute, privateRoute}

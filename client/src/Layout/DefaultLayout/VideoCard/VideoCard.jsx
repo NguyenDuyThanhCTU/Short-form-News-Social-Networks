@@ -1,6 +1,5 @@
 import React, {useRef, useState} from 'react'
 import {Link} from 'react-router-dom'
-import {VideoCardType} from '../../../assets/utils/VideoCardType'
 import {GoVerified} from 'react-icons/go'
 import {HiVolumeUp, HiVolumeOff} from 'react-icons/hi'
 import {BsFillPlayFill, BsFillPauseFill} from 'react-icons/bs'
@@ -10,7 +9,7 @@ function VideoCard({video}) {
   const [isMuted, setIsMuted] = useState(false)
   const [playing, setPlaying] = useState(false)
   const videoRef = useRef(null)
-  // console.log(VideoCardType[0].video.asset.url)
+
   const onVideoPress = () => {
     if (playing) {
       videoRef.current.pause()
@@ -24,7 +23,7 @@ function VideoCard({video}) {
   return (
     <div className="flex flex-col border-b-2 border-gray-200 pb-6">
       <div>
-        <div className="flex gap-3 p-2 cursor-pointer font-semibold rounded">
+        <div className="flex gap-3 px-2 pt-2 cursor-pointer font-semibold rounded">
           <div className="md:w-16 md:h-16 w-10 h-10">
             <Link to="/">
               <>
@@ -32,7 +31,7 @@ function VideoCard({video}) {
                   width={62}
                   height={62}
                   className="rounded-full"
-                  src={video.user.avatar}
+                  src={video.profile.avatar}
                   alt="profile Photo"
                   layout="reponsive"
                 />
@@ -41,19 +40,20 @@ function VideoCard({video}) {
           </div>
           <div>
             <Link to="/">
-              <div className=" flex items-center gap-2">
+              <div className="   gap-2 block">
                 <p className="flex gap-2 items-center md:text-sm font-bold text-primary">
-                  {video.user.name.replace(/\s+/g, '')}
+                  {video.profile.name.replace(/\s+/g, '')}
                   <GoVerified className="text-blue-400 text-sm" />
                 </p>
-                <p className="capitalize font-medium text-xs text-gray-500 hidden md:block">
-                  @{video.user.username}
+                <p className="capitalize font-medium text-xs text-gray-500 hidden mt-2 md:block">
+                  @{video.profile.account.username}
                 </p>
               </div>
             </Link>
           </div>
         </div>
       </div>
+      <div className="lg:ml-20 mb-5">{video.title}</div>
       <div className="lg:ml-20 flex gap-4 relative">
         <div
           onMouseEnter={() => setHover(true)}
@@ -64,8 +64,9 @@ function VideoCard({video}) {
             <video
               ref={videoRef}
               loop
+              muted={isMuted}
               className="lg:w[600px] h-[300px] md:h-[400px] lg:h-[530px] w-full rounded-2xl cursor-pointer bg-gray-100"
-              src={video.url}
+              src={video.video}
             ></video>
           </Link>
           {isHover && (

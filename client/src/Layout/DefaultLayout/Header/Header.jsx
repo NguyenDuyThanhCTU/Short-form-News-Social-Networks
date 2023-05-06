@@ -10,6 +10,7 @@ import {CgProfile} from 'react-icons/cg'
 import {SlSettings} from 'react-icons/sl'
 import {HiLogout} from 'react-icons/hi'
 import {AiOutlinePlus} from 'react-icons/ai'
+import {debounce} from 'lodash'
 
 // =====
 
@@ -27,6 +28,22 @@ function Header() {
   const user = useSelector((state) => state.Auth.login.currentUser)
 
   const [searchResult, setSearchResult] = useState('')
+  const [DataFetch, setDataFetch] = useState([])
+
+  async function handleSearch(query) {
+    const response = await axios.get(
+      `http://localhost:8080/account/search?q=${query}`
+    )
+    setDataFetch(response.data)
+  }
+
+  const delayedHandleSearch = debounce(handleSearch, 500)
+
+  function handleChange(event) {
+    // const query = event.target.value.toLowerCase()
+    setSearchResult(event)
+    delayedHandleSearch(event)
+  }
 
   const Logout = async () => {
     try {
@@ -43,7 +60,7 @@ function Header() {
   async function handleLogout() {
     await Logout()
   }
-
+  console.log(DataFetch)
   return (
     <header className=" h-16 flex justify-center bg-black items-center w-full fixed top-0 left-0 right-0 z-50">
       <div className=" text-white flex flex-row items-center w-2/3 px-6 justify-between ">
@@ -68,8 +85,11 @@ function Header() {
             render={(attrs) => (
               <div className="w-96" tabIndex="-1" {...attrs}>
                 <WrapperAccount style="rounded-lg shadow-[lgba(0, 0, 0, 0.12) 0px 2px 12px] bg-white">
-                  <AccountItem />
-                  <AccountItem />
+                  {DataFetch.map((account) => (
+                    <AccountItem data={account} />
+                  ))}
+
+                  {/* <AccountItem /> */}
                 </WrapperAccount>
               </div>
             )}
@@ -77,7 +97,7 @@ function Header() {
             <form className="flex flex-row bg-slate-100 rounded-3xl h-12 justify-center items-center w-96">
               <Input
                 style="bg-slate-100 h-9 w-72 text-black outline-none"
-                setData={setSearchResult}
+                setData={(e) => handleChange(e)}
                 text="Search news"
               />
 

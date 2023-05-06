@@ -4,7 +4,7 @@ import {FaCloudUploadAlt} from 'react-icons/fa'
 import {useDispatch, useSelector} from 'react-redux'
 import {NewsPost} from '../../redux/NewsSlice'
 import {PostNews} from '../../redux/apiRequest'
-import {Navigate, useNavigate} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 import {HandleUpload} from '../../config/aws.config'
 import {FaSpinner} from 'react-icons/fa'
 
@@ -23,8 +23,12 @@ function Post(isImage) {
   const navigate = useNavigate()
 
   const res = useSelector((state) => state.News.PostDataReq)
-  const idUser = useSelector((state) => state.Auth.login.currentUser._id)
-  const postId = useSelector((state) => state.News.PostDataRes.currentPost)
+
+  const profileId = useSelector(
+    (state) => state.Auth.login.currentUser.account.profile._id
+  )
+  const postId = useSelector((state) => state.News.PostDataRes.currentPost?._id)
+
   const uploadVideo = async (e) => {
     const SelectedFile = e.target.files[0]
     const filetypes = ['video/mp4', 'video/webm', 'video/ogg']
@@ -43,18 +47,17 @@ function Post(isImage) {
     setIsSubmit(false)
     setIsFinish(false)
   }
+
   function handleContinue() {
-    PostNews(res, dispatch, navigate)
+    PostNews(res, dispatch)
     setIsFinish(true)
   }
 
   function handlePost() {
     const newsPost = {
       topic: Topic,
-      user: idUser,
-      video: '',
+      profile: profileId,
     }
-
     dispatch(NewsPost(newsPost))
     setIsSubmit(true)
   }
@@ -63,8 +66,8 @@ function Post(isImage) {
     setFinish(true)
     const bucketVideo = 'video-sn'
     const bucketImage = 'image-sn'
-    const objectKeyVideo = `video_${idUser}/${postId}`
-    const objectKeyimg = `img_${idUser}/${postId}`
+    const objectKeyVideo = `video_${profileId}/${postId}`
+    const objectKeyimg = `img_${profileId}/${postId}`
     const typeVideo = isVideo.type
     const typeImage = isImage.image.type
 
@@ -75,20 +78,22 @@ function Post(isImage) {
       ])
 
       const ReupNews = {
-        url: Video,
+        video: Video,
         image: Image,
       }
-
-      await axios.post(`http://localhost:8080/video/update/${postId}`, ReupNews)
-
-      setFinish(false)
-      Navigate(`/profile/${idUser}`)
+      if (ReupNews.video && ReupNews.image) {
+        await axios.post(
+          `http://localhost:8080/post/update/${postId}`,
+          ReupNews
+        )
+        setFinish(false)
+        navigate(`/profile/${profileId}`)
+      }
     } catch (error) {
       console.error(error)
     }
   }
 
-  console.log(postId)
   useEffect(() => {
     axios
       .get('http://localhost:8080/alltopic')
@@ -98,28 +103,25 @@ function Post(isImage) {
       .catch((err) => console.log(err))
   }, [])
 
-  if (Finish) {
-    return (
-      <>
-        <div class="fixed top-0 left-0 right-0 bottom-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
-          <div className="fixed top-0 left-0 w-screen h-screen bg-gray-500 bg-opacity-75 flex justify-center items-center">
-            <div className="text-xl font-bold text-primary flex flex-col items-center">
-              <FaSpinner className="animate-spin text-2xl text-black " />
-              <div className="text-xl font-bold text-white animate-pulse pt-1">
-                Loading...
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-    )
-  }
   return (
     <div className="flex w-full h-full absolute left-0 top-[60px] lg:top-[70px] mb-10 pt-10 lg:pt-20 bg-[#F8F8F8] justify-center ">
       {isContinue ? (
         <div></div>
       ) : (
         <div className=" bg-white rounded-lg xl:h-[80vh] flex gap-6 flex-wrap justify-center items-center p-14 pt-6">
+          {Finish && (
+            <div class="fixed top-0 left-0 right-0 bottom-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
+              <div className="fixed top-0 left-0 w-screen h-screen bg-gray-500 bg-opacity-75 flex justify-center items-center">
+                <div className="text-xl font-bold text-primary flex flex-col items-center">
+                  <FaSpinner className="animate-spin text-2xl text-black " />
+                  <div className="text-xl font-bold text-white animate-pulse pt-1">
+                    Loading...
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div>
             <div>
               <p className="text-2xl font-bold">Upload Video</p>

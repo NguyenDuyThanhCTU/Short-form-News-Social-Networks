@@ -38,20 +38,6 @@ const SidebarProfile = () => {
               Dashboard
             </button>
           </Link>
-          <a
-            href="#"
-            class={Click === 'discover' ? conClickStyle : DefaultStyle}
-            onClick={() => setClick('discover')}
-          >
-            Discover
-          </a>
-          <a
-            href="#"
-            class={Click === 'inbox' ? conClickStyle : DefaultStyle}
-            onClick={() => setClick('inbox')}
-          >
-            Inbox
-          </a>
 
           <Link to="/">
             <button class={LogoutStyle}>Back </button>

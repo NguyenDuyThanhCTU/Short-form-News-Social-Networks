@@ -8,7 +8,9 @@ const TopicRoute = express.Router()
 const updateTopicRoute = express.Router()
 const deleteTopicRoute = express.Router()
 
-AddTopicRoute.post('/addtopic', contentController.AddTopic)
+AddTopicRoute.post('/addtopic', (req, res) => {
+  res.status(200).json('a')
+})
 TopicsRoute.get('/alltopic', contentController.GetTopic)
 
 module.exports = {

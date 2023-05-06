@@ -26,8 +26,15 @@ function Profile({setEdit}) {
   const [isFlag, setIsFlag] = useState(false)
   const [isFetch, setIsFetch] = useState(false)
   const [DataFetch, setDataFetch] = useState(null)
-
   const videoRef = useRef(null)
+
+  const handleHover = () => {
+    videoRef.current.play()
+    setTimeout(() => {
+      videoRef.current.currentTime = 0
+      videoRef.current.pause()
+    }, 3000)
+  }
 
   const handleUploadAvt = (e) => {
     const selectImg = e.target.files[0]
@@ -84,12 +91,10 @@ function Profile({setEdit}) {
       console.error(error)
     }
   }
-  console.log(DataFetch?.avatar)
+
   useEffect(() => {
     const handleFetch = async () => {
-      const res = await axios.get(
-        `http://localhost:8080/profile/6453c7433d9b45ef875e2c16`
-      )
+      const res = await axios.get(`http://localhost:8080/profile/${idProfile}`)
       setDataFetch(res.data)
       setIsLoading(false)
     }
@@ -216,7 +221,7 @@ function Profile({setEdit}) {
               class="w-20 h-20 rounded-full mr-4"
             />
             <div>
-              <h2 class="text-xl font-semibold">{DataFetch.name}</h2>
+              <h2 class="text-xl font-semibold">{DataFetch?.name}</h2>
               <p class="text-gray-600">@{Data.username}</p>
             </div>
           </div>
@@ -229,24 +234,9 @@ function Profile({setEdit}) {
         </div>
         <hr class="my-6" />
         <div class="flex mb-6">
-          {/* <div class="w-1/3 pr-6">
-          <h3 class="text-lg font-semibold mb-2">Stats</h3>
-          <p class="text-gray-600">
-            <span class="font-bold">Followers:</span> 10,000
-          </p>
-          <p class="text-gray-600">
-            <span class="font-bold">Following:</span> 500
-          </p>
-          <p class="text-gray-600">
-            <span class="font-bold">Likes:</span> 50,000
-          </p>
-          <p class="text-gray-600">
-            <span class="font-bold">Videos:</span> 100
-          </p>
-        </div> */}
           <div class="w-2/3">
             <h3 class="text-lg font-semibold mb-2">About Me</h3>
-            <p class="text-gray-600">{DataFetch.bio}</p>
+            <p class="text-gray-600">{DataFetch?.bio}</p>
           </div>
         </div>
         <hr class="my-6" />
@@ -256,36 +246,32 @@ function Profile({setEdit}) {
             See all
           </a>
         </div>
-        <div class="grid grid-cols-3 gap-4 ">
-          {/* <div className="grid grid-cols-3 gap-4">
-            {Data.news.map((video) => (
-              <div class="relative group rounded-lg overflow-hidden">
+        {/* <div class="w-full h-48 bg-gray-300"> */}
+        <div className="flex flex-wrap">
+          {DataFetch?.news
+            .filter((video) => video != null)
+            .map((video) => (
+              <div class="group w-1/6 h-44 relative m-2">
                 <video
                   key={video._id}
-                  src={video.url}
-                  class="w-full object-cover object-center"
+                  src={video.video}
+                  class="absolute inset-0 w-full h-full object-cover object-center rounded-md"
+                  preload="metadata"
+                  ref={videoRef}
+                  muted
+                  onMouseOver={handleHover}
+                  // loop
                   // title={video.title}
                 ></video>
                 <div class="absolute bottom-0 left-0 right-0 flex items-center justify-between px-3 py-2 bg-gray-800 bg-opacity-50 transition-opacity opacity-0 group-hover:opacity-100">
                   <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 rounded-full overflow-hidden">
-                      <img
-                        src={Data.profile_picture}
-                        class="w-full h-full object-cover object-center"
-                        alt="Avatar"
-                      />
-                    </div>
-                    <div class="text-sm font-semibold text-white">
-                      {Data.username}
-                    </div>
+                    <div class="text-sm font-semibold text-white">ta</div>
                   </div>
-                  <div class="text-sm font-semibold text-white">
-                    {video.views} views
-                  </div>
+                  <div class="text-sm font-semibold text-white">512 views</div>
                 </div>
               </div>
             ))}
-          </div> */}
+          {/* </div> */}
         </div>
         {/* <div class="grid grid-cols-3 gap-4">
           <div class="relative ">

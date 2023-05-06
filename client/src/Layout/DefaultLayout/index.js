@@ -8,7 +8,7 @@ import {FaSpinner} from 'react-icons/fa'
 
 function DefaultLayout({children}) {
   const [posts, setPosts] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   useEffect(() => {
     async function fetchPost() {
       const response = await axios.get('http://localhost:8080/posts')
@@ -39,13 +39,14 @@ function DefaultLayout({children}) {
   return (
     <div>
       <Header />
-      <div className="flex gap-6 md:gap-20 mt-16">
-        <div className="h-[92vh] overflow-hidden x1:hover:overflow-auto">
+      <div className="flex gap-6 md:gap-20 mt-16 ">
+        <div className="h-[92vh] overflow-hidden xl:hover:overflow-auto">
           <Sidebar />
         </div>
         {children && <div>{children}</div>}
-        <div className="flex flex-col gap-10 videos h-full w-2/3">
-          {/* {posts ? (
+
+        <div className="mt-4 flex flex-col gap-10 overflow-auto h-[88vh] videos flex-1">
+          {posts ? (
             <>
               {' '}
               {posts.map((video) => (
@@ -54,7 +55,7 @@ function DefaultLayout({children}) {
             </>
           ) : (
             <div>video is null</div>
-          )} */}
+          )}
         </div>
       </div>
     </div>
